@@ -357,25 +357,56 @@
     td,thead th{padding:12px 12px}
     .cc-val .big{font-size:34px}
   }
+  /* collapsible + favourites nav */
+  .navgroup{margin-bottom:2px}
+  .navcat{width:100%;display:flex;align-items:center;gap:8px;background:none;border:none;cursor:pointer;color:var(--muted-2);font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;font-weight:700;padding:11px 12px 6px;font-family:inherit}
+  .navcat .chev{width:12px;height:12px;margin-left:auto;opacity:.65;transition:transform .18s}
+  .navcat.static{cursor:default}
+  .navgroup.collapsed .chev{transform:rotate(-90deg)}
+  .navgroup.collapsed .navitems{display:none}
+  .navitems{display:flex;flex-direction:column;gap:2px}
+  .nav .nlbl{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .nav a .star{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;margin:-4px -6px -4px 2px;border-radius:6px;opacity:0;transition:.14s;color:var(--muted-2)}
+  .nav a .star svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:1.7}
+  .nav a:hover .star{opacity:.55}
+  .nav a .star:hover{opacity:1;background:rgba(255,255,255,0.06)}
+  .nav a .star.on{opacity:1;color:var(--amber)}
+  .nav a .star.on svg{fill:var(--amber);stroke:var(--amber)}
+  .navfav .navcat{color:var(--amber)}
+  .navfav a.active{background:rgba(245,181,68,0.1)}
+
+  /* level up · rewards */
+  .rewardhero{margin-top:22px;border:1px solid rgba(245,181,68,0.3);background:radial-gradient(520px 220px at 88% -20%,rgba(245,181,68,0.14),transparent 62%),linear-gradient(150deg,rgba(245,181,68,0.06),rgba(255,255,255,0.012));border-radius:20px;padding:22px 24px}
+  .rh-top{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+  .rh-pts{display:flex;align-items:baseline;gap:9px}
+  .rh-pts .n{font-size:38px;font-weight:700;letter-spacing:-0.02em;color:var(--amber)}
+  .rh-pts .l{font-size:13px;color:var(--muted);font-weight:600}
+  .rh-next{margin-left:auto;text-align:right;font-size:12px;color:var(--muted)}
+  .rh-next b{color:#f6d089}
+  .rh-bar{height:8px;border-radius:5px;background:rgba(255,255,255,0.07);margin-top:14px;overflow:hidden}
+  .rh-bar i{display:block;height:100%;border-radius:5px;background:linear-gradient(90deg,#f5b544,#f5d38a)}
+  .earnrow{display:flex;gap:7px;flex-wrap:wrap;margin-top:16px}
+  .earnchip{font-size:11.5px;color:var(--muted);border:1px solid var(--border);border-radius:20px;padding:5px 11px}
+  .earnchip b{color:var(--amber);font-weight:700}
+  .redeemgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:13px;margin-top:14px}
+  .redeem{border:1px solid var(--border);background:var(--panel);border-radius:16px;padding:17px 17px 16px;display:flex;flex-direction:column;gap:11px;position:relative}
+  .redeem.aff{border-color:rgba(245,181,68,0.32)}
+  .redeem .rtop{display:flex;align-items:center;gap:11px}
+  .redeem .ric{width:38px;height:38px;flex:0 0 38px;border-radius:11px;background:rgba(245,181,68,0.13);color:var(--amber);display:flex;align-items:center;justify-content:center}
+  .redeem .rtt{font-size:14px;font-weight:600;line-height:1.3}
+  .redeem .rtl{font-size:11.5px;color:var(--muted-2);margin-top:2px}
+  .redeem .rbot{display:flex;align-items:center;gap:10px;margin-top:auto}
+  .redeem .rcost{font-size:12.5px;font-weight:700;color:#f6d089}
+  .rbtn{margin-left:auto;border:none;border-radius:10px;font-family:inherit;font-weight:700;font-size:12.5px;padding:8px 14px;cursor:pointer}
+  .rbtn.on{background:var(--amber);color:#1a1204}
+  .rbtn.off{background:rgba(255,255,255,0.05);color:var(--muted-2);cursor:default}
+  .rbtn.on:hover{filter:brightness(1.06)}
 </style>
 </head>
 <body>
 <aside class="sidebar">
   <div class="brand"><span class="logo"></span> Orba Health</div>
-  <nav class="nav">
-    <a data-v="hop" onclick="showView('hop')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg> Health Optimization Plan</a>
-    <a data-v="dashboard" onclick="showView('dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg> Today</a>
-    <a data-v="plan" onclick="showView('plan')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg> My Plan <span class="tag new">NEW</span></a>
-    <a data-v="progress" onclick="showView('progress')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V5M4 19h16"/><path d="M7 15l4-5 3 3 5-7"/></svg> Progress <span class="tag new">NEW</span></a>
-    <a data-v="stack" onclick="showView('stack')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="8.5" width="18" height="7" rx="3.5"/><path d="M12 8.5v7"/></svg> Stack <span class="tag new">NEW</span></a>
-    <a data-v="blood" onclick="showView('blood')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2s6 7 6 12a6 6 0 0 1-12 0c0-5 6-12 6-12z"/></svg> Blood Biomarkers</a>
-    <a data-v="physical" onclick="showView('physical')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.4 14.5 16 10 4 22"/><circle cx="6" cy="6" r="2"/><path d="M14 6l3 3 4-4"/></svg> Physical Biomarkers <span class="tag new">NEW</span></a>
-    <a data-v="body" onclick="showView('body')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-4.35-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.65-7 10-7 10z"/></svg> Body <span class="tag soon">PHASE 2</span></a>
-    <a data-v="team" onclick="showView('team')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3"/><path d="M3.5 20a5.5 6 0 0 1 11 0"/><path d="M16 5.2a3 3 0 0 1 0 5.6M18.5 20a5.5 6 0 0 0-3-5.3"/></svg> Care Team <span class="tag new">NEW</span></a>
-    <a data-v="ask" onclick="showView('ask')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Ask Orba</a>
-    <a data-v="labs" onclick="showView('labs')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12M8 7l4-4 4 4M4 21h16"/></svg> Lab Reports</a>
-    <a data-v="levelup" onclick="showView('levelup')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l2.9 6 6.6.6-5 4.3 1.5 6.5L12 16.9 5.9 20.4 7.4 13l-5-4.3L9 8z"/></svg> Level Up <span class="tag pur">NEW</span></a>
-  </nav>
+  <nav class="nav" id="nav"></nav>
   <button class="checkinBtn" onclick="ciOpen()">＋ Daily check-in</button>
   <div class="spacer"></div>
   <div class="draw"><svg width="16" height="16" viewBox="0 0 24 24" fill="var(--red)"><path d="M12 2s6 7 6 12a6 6 0 0 1-12 0c0-5 6-12 6-12z"/></svg><div><div class="t1">Blood Draw</div><div class="t2">Overdue by 5 days</div></div><span class="book">Book</span></div>
@@ -510,6 +541,8 @@
       <div class="c"><div class="lab">Systems personalised</div><div class="n">6 <span style="color:var(--muted-2);font-size:15px">/ 8</span></div><div class="hint">Hormones & Kidneys need 1 quest each</div></div>
       <div class="c"><div class="lab">Insights unlocked</div><div class="n">23</div><div class="hint">+4 waiting behind your next 2 quests</div></div>
     </div>
+    <div class="sectitle" style="margin-top:30px">Rewards <span style="text-transform:none;letter-spacing:0;font-weight:400;color:var(--muted-2)">· your points, redeemed for real Orba credit</span></div>
+    <div id="rewards"></div>
     <div class="sectitle" style="margin-top:30px">Your focus</div>
     <div class="goalpick"><div class="gp-t">What are you optimising for?</div><div class="gp-s">Pick up to 3. Your plan, quests and deep-dives adapt to what you choose.</div><div class="goalchips" id="goalChips"></div></div>
     <div class="sectitle" style="margin-top:30px">Deep-dive intakes <span style="text-transform:none;letter-spacing:0;font-weight:400;color:var(--muted-2)">· surfaced for you based on your profile</span></div>
@@ -595,7 +628,11 @@ const ICONS={
  steps:'<path d="M9 21c-2 0-3.2-1.3-3.2-3.2 0-1.7 1-2.6 1-4.6 0-1.7.8-3.2 2.6-3.2s2.4 1.7 2.4 3.6-.6 7.4-2.8 7.4zM16.5 12.5c1.4 0 2.4-1 2.4-2.5 0-1.4.5-2.4.5-3.8 0-1.3-.7-2.6-2.2-2.6s-2 1.5-2 3 .5 5.9 1.3 5.9z"/>',
  target:'<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r=".9" fill="currentColor" stroke="none"/>',
  spark:'<path d="M12 3l1.9 5.4L19 10l-5.1 1.6L12 17l-1.9-5.4L5 10l5.1-1.6z"/>',
- lab:'<path d="M9 3v6l-4.5 8A2 2 0 0 0 6.3 20h11.4a2 2 0 0 0 1.8-3L15 9V3M8 3h8M8.5 14h7"/>'
+ lab:'<path d="M9 3v6l-4.5 8A2 2 0 0 0 6.3 20h11.4a2 2 0 0 0 1.8-3L15 9V3M8 3h8M8.5 14h7"/>',
+ chat:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+ team:'<circle cx="9" cy="8" r="3"/><path d="M3.5 20a5.5 6 0 0 1 11 0"/><path d="M16 5.2a3 3 0 0 1 0 5.6M18.5 20a5.5 6 0 0 0-3-5.3"/>',
+ gift:'<rect x="3.5" y="9" width="17" height="11" rx="1.5"/><path d="M3.5 9h17M12 9v11M12 9S9.5 4.5 7.5 5.5 9 9 12 9zM12 9s2.5-4.5 4.5-3.5S15 9 12 9z"/>',
+ scan:'<rect x="3.5" y="4.5" width="17" height="15" rx="2"/><path d="M7 9h4v6H7zM14 9h3M14 12h3M14 15h3"/>'
 };
 function ic(name,size){size=size||20;return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name]||''}</svg>`;}
 function drawChart(svgId,m,H){
@@ -821,8 +858,8 @@ function closeSupp(){document.getElementById('suppOverlay').classList.remove('sh
 function saveSupp(){closeSupp();toast('✓ Added to your stack · your team will review it for interactions');}
 
 /* ---- goal tracks ---- */
-const GOALS=['Longevity','Fat loss','Metabolic','Cardiovascular','Cognitive','Hormonal','Sleep','Strength','Stress','Gut'];
-let goalSel=new Set(['Cardiovascular','Longevity']);
+const GOALS=['Health optimisation','Weight loss','Longevity','Metabolic','Cardiovascular','Cognitive','Hormonal','Sleep','Strength','Gut'];
+let goalSel=new Set(['Health optimisation','Weight loss','Longevity']);
 function goalRender(){document.getElementById('goalChips').innerHTML=GOALS.map(g=>`<span class="gchip ${goalSel.has(g)?'on':''}" onclick="goalToggle('${g}')">${g}</span>`).join('');}
 function goalToggle(g){if(goalSel.has(g))goalSel.delete(g);else{if(goalSel.size>=3){toast('Pick up to 3 — deselect one first');return;}goalSel.add(g);}goalRender();}
 
@@ -940,7 +977,95 @@ function teamRender(){
   document.getElementById('teamThread').innerHTML=msgs.map(m=>`<div class="msg ${m[0]}">${m[0]==='them'?`<div class="mav" style="background:${m[3]}">${m[1]}</div>`:''}<div><div class="who">${m[2]}</div><div class="mb">${m[4]}</div></div></div>`).join('');
 }
 
+/* ---------------- sidebar: collapsible categories + favourites ---------------- */
+const NAVICONS={
+ hop:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/>',
+ dashboard:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
+ plan:'<path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/>',
+ progress:'<path d="M4 19V5M4 19h16"/><path d="M7 15l4-5 3 3 5-7"/>',
+ stack:'<rect x="3" y="8.5" width="18" height="7" rx="3.5"/><path d="M12 8.5v7"/>',
+ blood:'<path d="M12 2s6 7 6 12a6 6 0 0 1-12 0c0-5 6-12 6-12z"/>',
+ physical:'<path d="M20.4 14.5 16 10 4 22"/><circle cx="6" cy="6" r="2"/><path d="M14 6l3 3 4-4"/>',
+ body:'<path d="M12 21s-7-4.35-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.65-7 10-7 10z"/>',
+ team:'<circle cx="9" cy="8" r="3"/><path d="M3.5 20a5.5 6 0 0 1 11 0"/><path d="M16 5.2a3 3 0 0 1 0 5.6M18.5 20a5.5 6 0 0 0-3-5.3"/>',
+ ask:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+ labs:'<path d="M12 3v12M8 7l4-4 4 4M4 21h16"/>',
+ levelup:'<path d="M12 2l2.9 6 6.6.6-5 4.3 1.5 6.5L12 16.9 5.9 20.4 7.4 13l-5-4.3L9 8z"/>'
+};
+const NAV=[
+ {cat:'Overview',items:[{v:'hop',t:'Health Optimization Plan'},{v:'dashboard',t:'Today'}]},
+ {cat:'Plan & Progress',items:[{v:'plan',t:'My Plan',tag:'new',tt:'NEW'},{v:'progress',t:'Progress',tag:'new',tt:'NEW'},{v:'stack',t:'Stack',tag:'new',tt:'NEW'}]},
+ {cat:'Biomarkers',items:[{v:'blood',t:'Blood'},{v:'physical',t:'Physical',tag:'new',tt:'NEW'},{v:'body',t:'Body',tag:'soon',tt:'PHASE 2'}]},
+ {cat:'Support',items:[{v:'team',t:'Care Team',tag:'new',tt:'NEW'},{v:'ask',t:'Ask Orba'},{v:'labs',t:'Lab Reports'}]},
+ {cat:'Grow',items:[{v:'levelup',t:'Level Up',tag:'pur',tt:'NEW'}]}
+];
+const NAVLOOKUP={};NAV.forEach(g=>g.items.forEach(it=>NAVLOOKUP[it.v]=it));
+let favSet=new Set(),catCollapsed=new Set();
+try{favSet=new Set(JSON.parse(localStorage.getItem('orba_fav')||'[]'));}catch(e){}
+try{catCollapsed=new Set(JSON.parse(localStorage.getItem('orba_cat')||'[]'));}catch(e){}
+function saveNavState(){try{localStorage.setItem('orba_fav',JSON.stringify([...favSet]));localStorage.setItem('orba_cat',JSON.stringify([...catCollapsed]));}catch(e){}}
+const STAR='<svg viewBox="0 0 24 24"><path d="M12 2l2.9 6 6.6.6-5 4.3 1.5 6.5L12 16.9 5.9 20.4 7.4 13l-5-4.3L9 8z"/></svg>';
+const CHEV='<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>';
+function navItemHTML(it){
+  const tag=it.tag?` <span class="tag ${it.tag}">${it.tt||'NEW'}</span>`:'';
+  const on=favSet.has(it.v)?'on':'';
+  return `<a data-v="${it.v}" onclick="showView('${it.v}')" tabindex="0" title="${it.t}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">${NAVICONS[it.v]||''}</svg><span class="nlbl">${it.t}</span>${tag}<span class="star ${on}" role="button" aria-label="Toggle favourite" onclick="event.stopPropagation();toggleFav('${it.v}')">${STAR}</span></a>`;
+}
+function renderNav(){
+  let html='';
+  if(favSet.size){
+    const favItems=NAV.flatMap(g=>g.items).filter(it=>favSet.has(it.v));
+    html+=`<div class="navgroup navfav"><div class="navcat static"><span>★ Favourites</span></div><div class="navitems">${favItems.map(navItemHTML).join('')}</div></div>`;
+  }
+  html+=NAV.map(g=>{
+    const col=catCollapsed.has(g.cat)?'collapsed':'';
+    return `<div class="navgroup ${col}"><button class="navcat" onclick="toggleCat('${g.cat}')"><span>${g.cat}</span>${CHEV}</button><div class="navitems">${g.items.map(navItemHTML).join('')}</div></div>`;
+  }).join('');
+  document.getElementById('nav').innerHTML=html;
+  document.querySelectorAll('#nav a').forEach(a=>{a.classList.toggle('active',a.dataset.v===window.__cv);a.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();a.click();}});});
+}
+function toggleFav(v){if(favSet.has(v))favSet.delete(v);else favSet.add(v);saveNavState();renderNav();}
+function toggleCat(c){if(catCollapsed.has(c))catCollapsed.delete(c);else catCollapsed.add(c);saveNavState();renderNav();}
+
+/* ---------------- level up: points → rewards ---------------- */
+const POINTS=1240;
+const REWARDS=[
+ {t:'฿500 off your next blood draw',cost:1000,ic:'lab',tl:'Quarterly panel'},
+ {t:'Priority team consult',cost:800,ic:'team',tl:'Skip the queue'},
+ {t:'Orba recovery kit',cost:600,ic:'gift',tl:'Merch + supplements'},
+ {t:'InBody body-composition scan',cost:1500,ic:'scan',tl:'Add-on to any visit'},
+ {t:'Extra 1:1 coaching call',cost:2000,ic:'chat',tl:'30 min with your coach'},
+ {t:'10% off your Loop renewal',cost:2500,ic:'spark',tl:'Annual membership'}
+];
+function rewardsRender(){
+  const sorted=[...REWARDS].sort((a,b)=>a.cost-b.cost);
+  const next=sorted.find(r=>r.cost>POINTS);
+  const pct=next?Math.min(100,Math.round(POINTS/next.cost*100)):100;
+  const nextTxt=next?`<b>${next.cost-POINTS} pts</b> to <b>${next.t}</b>`:'You can redeem everything available';
+  const hero=`<div class="rewardhero">
+    <div class="rh-top">
+      <div class="rh-pts"><span class="n">${POINTS.toLocaleString()}</span><span class="l">points</span></div>
+      <div class="rh-next">${nextTxt}</div>
+    </div>
+    <div class="rh-bar"><i style="width:${pct}%"></i></div>
+    <div class="earnrow">
+      <span class="earnchip">Daily check-in <b>+10</b></span>
+      <span class="earnchip">Finish a quest <b>+50</b></span>
+      <span class="earnchip">Deep-dive intake <b>+200</b></span>
+      <span class="earnchip">7-day streak <b>+100</b></span>
+      <span class="earnchip">Refer a friend <b>+1000</b></span>
+    </div></div>`;
+  const grid=`<div class="redeemgrid">${REWARDS.map((r,i)=>{
+    const aff=POINTS>=r.cost;
+    const btn=aff?`<button class="rbtn on" onclick="redeem(${i})">Redeem</button>`:`<button class="rbtn off">${r.cost-POINTS} pts to go</button>`;
+    return `<div class="redeem ${aff?'aff':''}"><div class="rtop"><div class="ric">${ic(r.ic,20)}</div><div><div class="rtt">${r.t}</div><div class="rtl">${r.tl}</div></div></div><div class="rbot"><span class="rcost">${r.cost.toLocaleString()} pts</span>${btn}</div></div>`;
+  }).join('')}</div>`;
+  document.getElementById('rewards').innerHTML=hero+grid;
+}
+function redeem(i){const r=REWARDS[i];if(POINTS<r.cost){toast('Not enough points yet');return;}toast('✓ Redeemed · '+r.t+' — code sent to your email & added at your next visit');}
+
 function showView(v){
+  window.__cv=v;
   document.querySelectorAll('.view').forEach(s=>s.style.display='none');
   document.getElementById('v_'+v).style.display='block';
   document.querySelectorAll('.nav a,.foot a').forEach(a=>a.classList.toggle('active',a.dataset.v===v));
@@ -948,7 +1073,7 @@ function showView(v){
   if(v==='blood')renderBlood();
   if(v==='physical')pmRender();
   if(v==='body')bodyRender();
-  if(v==='levelup'){questRender();goalRender();intakeListRender();}
+  if(v==='levelup'){questRender();goalRender();intakeListRender();rewardsRender();}
   if(v==='plan')planRender();
   if(v==='progress')progressRender();
   if(v==='team')teamRender();
@@ -1008,7 +1133,8 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeLog();ciClose(
 document.getElementById('bloodOverlay').addEventListener('click',e=>{if(e.target.id==='bloodOverlay')closeBlood();});
 document.getElementById('intakeOverlay').addEventListener('click',e=>{if(e.target.id==='intakeOverlay')closeIntake();});
 document.getElementById('suppOverlay').addEventListener('click',e=>{if(e.target.id==='suppOverlay')closeSupp();});
-document.querySelectorAll('.nav a,.foot a').forEach(a=>{a.setAttribute('tabindex','0');a.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();a.click();}});});
+document.querySelectorAll('.foot a').forEach(a=>{a.setAttribute('tabindex','0');a.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();a.click();}});});
+renderNav();
 showView('dashboard');
 </script>
 </body>
