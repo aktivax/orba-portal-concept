@@ -242,6 +242,11 @@
   .field .iw{display:flex;align-items:center;gap:8px;border:1px solid var(--border);background:var(--panel);border-radius:11px;padding:0 12px}
   .field input{flex:1;background:transparent;border:none;outline:none;color:var(--txt);font-size:15px;padding:12px 0;font-family:inherit}
   .field .unit{font-size:12px;color:var(--muted-2)}
+  #logFields{display:grid;grid-template-columns:1fr 1fr;gap:12px 14px;margin-top:4px}
+  .lastv{color:var(--muted-2);font-weight:400;font-size:11px;margin-left:6px}
+  .field.foc .iw{border-color:var(--blue-solid);box-shadow:0 0 0 1px rgba(126,162,255,0.4)}
+  #logOverlay .modal{max-width:560px}
+  @media(max-width:560px){#logFields{grid-template-columns:1fr}}
   .modact{display:flex;gap:10px;margin-top:18px}.modact .save{flex:1;background:var(--blue-solid);color:#0a1024;border:none;font-weight:600;font-size:14px;padding:12px;border-radius:12px;cursor:pointer}.modact .cancel{background:transparent;color:var(--muted);border:1px solid var(--border);padding:12px 18px;border-radius:12px;cursor:pointer;font-size:14px}
   .toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--green);color:#062015;font-weight:600;font-size:14px;padding:12px 20px;border-radius:12px;opacity:0;transition:.3s;z-index:70;pointer-events:none}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -407,7 +412,7 @@
     <div class="tablewrap"><table><thead><tr><th>Marker</th><th class="hidecol">Category</th><th>Value</th><th class="hidecol">Optimal / target</th><th>Status</th><th class="r">12-week trend</th></tr></thead><tbody id="pmBody"></tbody></table></div>
     <div class="chartcard"><div class="cc-glow"></div>
       <div class="cc-head"><div><div class="cc-title" id="pmTitle"></div><div class="cc-val"><span class="big" id="pmBig"></span><span class="u" id="pmUnit"></span><span class="status" id="pmStatus"></span></div></div>
-        <div class="cc-delta"><div class="d" id="pmDelta"></div><div class="lab">since 6 May · 12 weeks</div></div></div>
+        <div style="display:flex;align-items:center;gap:14px"><div class="cc-delta"><div class="d" id="pmDelta"></div><div class="lab">since 6 May · 12 weeks</div></div><button class="btn soft" style="padding:9px 13px;font-size:13px" onclick="openLog(pmCur)">＋ Update</button></div></div>
       <div style="margin-top:18px"><svg id="pmChart" width="100%" viewBox="0 0 880 270" style="height:auto;display:block" role="img" aria-label="Marker trend chart"></svg></div>
       <div class="toGoal"><div class="tg-top"><div class="l" id="pmTgLabel"></div><div class="pct" id="pmTgPct"></div></div>
         <div class="track"><div class="fill" id="pmFill"></div><div class="now" id="pmNow"></div><div class="flag"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#43d99a" stroke-width="1.8"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4"/></svg></div></div>
@@ -470,22 +475,11 @@
 <!-- LOG MEASUREMENTS MODAL -->
 <div class="overlay" id="logOverlay">
   <div class="modal">
-    <h2>Log measurements</h2>
-    <div class="msub">Your 3–4 month physical panel. Takes about 2 minutes.</div>
-    <div class="modrow">
-      <div class="field"><label>Weight</label><div class="iw"><input type="number" placeholder="78.4"><span class="unit">kg</span></div></div>
-      <div class="field"><label>Waist (abdominal)</label><div class="iw"><input type="number" placeholder="88"><span class="unit">cm</span></div></div>
-    </div>
-    <div class="modrow">
-      <div class="field"><label>Grip strength (avg)</label><div class="iw"><input type="number" placeholder="48"><span class="unit">kg</span></div></div>
-      <div class="field"><label>Neck (optional)</label><div class="iw"><input type="number" placeholder="38"><span class="unit">cm</span></div></div>
-    </div>
-    <div class="modrow">
-      <div class="field"><label>Resting heart rate</label><div class="iw"><input type="number" placeholder="58"><span class="unit">bpm</span></div></div>
-      <div class="field"><label>VO₂max (field test)</label><div class="iw"><input type="number" placeholder="44"><span class="unit"></span></div></div>
-    </div>
-    <div class="msub" style="margin:2px 0 0">Height (180 cm) is on file — we'll compute your Waist-to-Height Ratio automatically.</div>
-    <div class="modact"><button class="cancel" onclick="closeLog()">Cancel</button><button class="save" onclick="saveLog()">Save measurements</button></div>
+    <h2 id="logTitle">Log measurements</h2>
+    <div class="msub">Fill in only what you measured today — leave the rest blank and we'll keep your last value.</div>
+    <div id="logFields"></div>
+    <div class="msub" style="margin:10px 0 0">Height 180 cm is on file → Waist-to-Height Ratio is computed automatically.</div>
+    <div class="modact"><button class="cancel" onclick="closeLog()">Cancel</button><button class="save" onclick="saveLog()">Save what I entered</button></div>
   </div>
 </div>
 <div class="toast" id="toast">✓ Saved</div>
@@ -804,9 +798,15 @@ function toggleNav(){
 }
 
 /* ---------------- log modal ---------------- */
-function openLog(){document.getElementById('logOverlay').classList.add('show');document.body.style.overflow='hidden';}
+const LOGKEYS=['weight','waist','grip','vo2','rhr','neck'];
+function openLog(focusKey){
+  if(typeof focusKey!=='string')focusKey=null;
+  document.getElementById('logTitle').textContent=focusKey?('Update '+PM[focusKey].name):'Log measurements';
+  document.getElementById('logFields').innerHTML=LOGKEYS.map(k=>{const m=PM[k];return `<div class="field ${k===focusKey?'foc':''}"><label>${m.name} <span class="lastv">last ${m.v}${m.u?(' '+m.u):''} · 6 May</span></label><div class="iw"><input type="number" inputmode="decimal" placeholder="—"><span class="unit">${m.u||''}</span></div></div>`;}).join('');
+  document.getElementById('logOverlay').classList.add('show');document.body.style.overflow='hidden';
+}
 function closeLog(){document.getElementById('logOverlay').classList.remove('show');document.body.style.overflow='';}
-function saveLog(){closeLog();toast('✓ Measurements saved · trends updated');}
+function saveLog(){closeLog();toast('✓ Saved · only the fields you entered were updated');}
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600);}
 document.getElementById('logOverlay').addEventListener('click',e=>{if(e.target.id==='logOverlay')closeLog();});
 
