@@ -401,6 +401,14 @@
   .rbtn.on{background:var(--amber);color:#1a1204}
   .rbtn.off{background:rgba(255,255,255,0.05);color:var(--muted-2);cursor:default}
   .rbtn.on:hover{filter:brightness(1.06)}
+
+  /* deep-dive intake · sections + framing */
+  .i-intro{font-size:13.5px;color:var(--muted);line-height:1.55;margin:14px 0 6px;padding:13px 15px;border:1px solid var(--border);border-left:2px solid var(--blue-solid);background:rgba(126,162,255,0.05);border-radius:12px}
+  .q-sec{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--blue);font-weight:700;margin:20px 2px 6px;padding-top:12px;border-top:1px solid var(--border)}
+  .q-sec:first-of-type{border-top:none;padding-top:0;margin-top:14px}
+  .i-unlock{display:flex;gap:9px;align-items:flex-start;margin-top:18px;padding:13px 15px;border:1px solid rgba(67,217,154,0.28);background:rgba(67,217,154,0.06);border-radius:12px;font-size:13px;color:#cfe9dc;line-height:1.5}
+  .i-unlock .rx{color:var(--green);flex:0 0 auto;margin-top:1px}
+  .i-unlock b{color:var(--green)}
 </style>
 </head>
 <body>
@@ -789,13 +797,14 @@ function questRender(){
   // inject gradient def into the ring svg
   const svg=document.querySelector('#strengthRing svg');
   if(svg && !svg.querySelector('#pg')){const d=document.createElementNS('http://www.w3.org/2000/svg','defs');d.innerHTML='<linearGradient id="pg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#43d99a"/><stop offset="1" stop-color="#b79cff"/></linearGradient>';svg.prepend(d);}
-  document.getElementById('quests').innerHTML=QUESTS.map(q=>{let cta;
-    if(q.done)cta=`<div class="donechip">✓ Completed · ${q.gain} confidence</div>`;
-    else if(q.inprogress)cta=`<div class="prog"><i style="width:${q.progress}%"></i></div><div class="progtxt">${q.progtxt}</div>`;
-    else cta=`<span class="progtxt" style="color:var(--muted-2)">sharpens your profile</span><button class="qbtn">${q.cta}</button>`;
+  document.getElementById('quests').innerHTML=QUESTS.map((q,i)=>{let cta;
+    if(q.done)cta=`<div class="donechip">✓ Completed · ${q.gain} confidence · +5 pts</div>`;
+    else if(q.inprogress)cta=`<div class="prog"><i style="width:${q.progress}%"></i></div><div class="progtxt">${q.progtxt} · +5 pts on finish</div>`;
+    else cta=`<span class="progtxt" style="color:var(--muted-2)">+5 pts · ฿100 credit</span><button class="qbtn" onclick="questComplete(${i})">${q.cta}</button>`;
     return `<div class="q ${q.done?'done':''} ${q.feature?'feature':''}">${q.feature?'<span class="featTag">START HERE</span>':''}<div class="qtop"><div class="ic">${ic(q.ic)}</div><div><div class="qcat">${q.cat}</div><div class="qtitle">${q.title}</div><div class="qmeta"><span>${q.time}</span><span class="gain">+${q.gain.replace('+','')} confidence</span></div></div></div><div class="reward"><span class="rx">${ic('spark',14)}</span><span>${q.reward}</span></div><div class="cta">${cta}</div></div>`;
   }).join('');
 }
+function questComplete(i){const q=QUESTS[i];if(q.done)return;q.done=true;q.inprogress=false;awardPoints(5,'Quest complete');questRender();}
 
 /* ---------------- router ---------------- */
 /* ---- blood detail (insight -> action) ---- */
@@ -865,32 +874,63 @@ function goalToggle(g){if(goalSel.has(g))goalSel.delete(g);else{if(goalSel.size>
 
 /* ---- deep-dive intake modules ---- */
 const INTAKES={
- glp1:{ic:'pill',title:'GLP-1 support',trigger:'Surfaces when you start a GLP-1 medication',sharpen:'Metabolism & body composition',time:'4 min',sample:true,qs:[
-   {t:'single',q:'Which medication are you on?',o:['Semaglutide','Tirzepatide','Other','Prefer not to say']},
-   {t:'single',q:'Where are you in your dose?',o:['Titrating up','Stable maintenance','Tapering down']},
-   {t:'multi',q:'Side effects this month? (select all)',o:['Nausea','Constipation','Reflux','Fatigue','Hair thinning','None']},
-   {t:'scale',q:'How strong is appetite suppression? (1–5)',o:['1','2','3','4','5']},
+ glp1:{ic:'pill',title:'GLP-1 support',trigger:'Surfaces when you start a GLP-1 medication',sharpen:'Metabolism & body composition',time:'5 min',sample:true,
+   intro:"You're on a GLP-1. These questions help your team protect your muscle and nutrition while you lose fat — and catch the few side-effects worth watching — so the weight you lose is the right weight.",
+   unlocks:'Sharpens your Metabolism & Body-composition scores and tailors your protein, training and dose-timing guidance.',qs:[
+   {sec:'Your medication'},
+   {t:'single',q:'Which medication are you on?',o:['Semaglutide','Tirzepatide','Liraglutide','Other','Prefer not to say']},
+   {t:'single',q:'Where are you in your dose?',o:['Just started','Titrating up','Stable maintenance','Tapering down']},
+   {t:'single',q:'How long have you been on it?',o:['Under 1 month','1–3 months','3–6 months','6+ months']},
+   {sec:'Response & side-effects'},
+   {t:'scale',q:'How strong is appetite suppression right now? (1–5)',o:['1','2','3','4','5']},
+   {t:'single',q:'Weight change since starting',o:['Losing steadily','Lost then plateaued','Slow / minimal','Regaining']},
+   {t:'multi',q:'Side-effects this month? (select all)',o:['Nausea','Constipation','Diarrhoea','Reflux / heartburn','Fatigue','Hair thinning','None']},
+   {t:'single',q:'Any upper-right abdominal pain? (gallbladder)',o:['No','Occasionally','Yes — often']},
+   {sec:'Protecting muscle & nutrition'},
    {t:'number',q:'Rough daily protein (grams)',ph:'e.g. 90'},
    {t:'single',q:'Resistance-training days per week',o:['0','1–2','3–4','5+']},
-   {t:'single',q:'Any upper-right abdominal pain? (gallbladder)',o:['No','Occasionally','Yes, often']},
+   {t:'single',q:'Noticing muscle loss or weakness?',o:['No','A little','Yes']},
+   {sec:'Safety'},
+   {t:'single',q:'Personal or family history of medullary thyroid cancer or pancreatitis?',o:['No','Yes','Unsure']},
    {t:'text',q:'Anything else your team should know?'}
  ]},
- peri:{ic:'spark',title:'Perimenopause deep-dive',trigger:'Surfaces for women with cycle / sleep changes',sharpen:'Hormones & Sleep',time:'5 min',sample:true,qs:[
-   {t:'single',q:'Menstrual status',o:['Regular cycles','Irregular / changing','Stopped 12+ months']},
-   {t:'scale',q:'Hot flushes / night sweats (frequency 1–5)',o:['1','2','3','4','5']},
-   {t:'multi',q:'Which symptoms are present?',o:['Sleep disruption','Mood changes','Brain fog','Vaginal dryness','Low libido','Joint aches','None']},
-   {t:'single',q:'On or considering HRT?',o:['On HRT','Considering','Not interested','Unsure']},
-   {t:'single',q:'Family history of osteoporosis or early heart disease?',o:['Yes','No','Unsure']},
+ peri:{ic:'spark',title:'Perimenopause deep-dive',trigger:'Surfaces for women with cycle / sleep changes',sharpen:'Hormones & Sleep',time:'6 min',sample:true,
+   intro:'Perimenopause shifts hormones, sleep, mood and long-term bone and heart risk — often years before periods stop. This builds the fuller picture so your team can treat the cause, not just the symptoms.',
+   unlocks:'Sharpens your Hormones & Sleep scores and shapes whether bone, heart or symptom-relief becomes your priority.',qs:[
+   {sec:'Cycle & stage'},
+   {t:'single',q:'Menstrual status',o:['Regular cycles','Irregular / changing','Stopped under 12 months','Stopped 12+ months']},
+   {t:'single',q:'Bleeding pattern lately',o:['Heavier / longer','Lighter / shorter','Unpredictable','No change / N/A']},
+   {sec:'Symptoms'},
+   {t:'scale',q:'Hot flushes / night sweats — frequency (1–5)',o:['1','2','3','4','5']},
+   {t:'multi',q:'Which symptoms are present?',o:['Sleep disruption','Mood changes','Anxiety','Brain fog','Vaginal dryness','Low libido','Joint aches','Palpitations','None']},
+   {t:'single',q:'Sleep quality lately',o:['Good','Broken','Poor']},
+   {t:'scale',q:'How much do symptoms affect daily life? (1–5)',o:['1','2','3','4','5']},
+   {sec:'Bone & heart risk'},
+   {t:'single',q:'Family history of osteoporosis or fracture?',o:['Yes','No','Unsure']},
+   {t:'single',q:'Family history of early heart disease?',o:['Yes','No','Unsure']},
+   {t:'single',q:'Ever had a bone-density (DEXA) scan?',o:['Yes','No','Unsure']},
+   {sec:'Treatment & goals'},
+   {t:'single',q:'On or considering HRT / MHT?',o:['On HRT','Considering','Not interested','Unsure']},
+   {t:'multi',q:'What matters most to you?',o:['Symptom relief','Better sleep','Bone protection','Heart protection','Mood','Libido']},
    {t:'text',q:'Anything else?'}
  ]},
- andro:{ic:'heart',title:'Men 50+ · hormones & heart',trigger:'Matched to you — age 52, free testosterone low-normal',sharpen:'Hormones & Heart',time:'4 min',hot:true,qs:[
+ andro:{ic:'heart',title:'Men 50+ · hormones & heart',trigger:'Matched to you — age 52, free testosterone low-normal',sharpen:'Hormones & Heart',time:'5 min',hot:true,
+   intro:"Matched to you from your age and a low-normal free testosterone. This separates 'just getting older' from things worth acting on — hormones, heart and prostate — so any decision (including TRT) rests on real signal.",
+   unlocks:'Sharpens your Hormones & Heart scores and guides whether TRT, training or cardiovascular screening comes first.',qs:[
+   {sec:'Energy & drive'},
    {t:'scale',q:'Energy & drive lately (1–5)',o:['1','2','3','4','5']},
    {t:'single',q:'Morning erections',o:['Most days','Sometimes','Rarely']},
    {t:'single',q:'Libido',o:['Good','Reduced','Low']},
-   {t:'multi',q:'Noticed any of these?',o:['Muscle loss','Belly-fat gain','Low mood','Poor sleep','None']},
+   {sec:'Body & sleep'},
+   {t:'multi',q:'Noticed any of these?',o:['Muscle loss','Belly-fat gain','Reduced strength','Low mood','Poor sleep','None']},
+   {t:'single',q:'Resistance-training days per week',o:['0','1–2','3–4','5+']},
+   {t:'single',q:'Sleep quality',o:['Good','Broken','Poor']},
+   {sec:'Hormone & prostate safety'},
    {t:'single',q:'On or considering TRT?',o:['On TRT','Considering','Not interested','Unsure']},
    {t:'single',q:'PSA / prostate check in the last 12 months?',o:['Yes','No','Unsure']},
-   {t:'text',q:'Anything else?'}
+   {t:'single',q:'Chest tightness or breathlessness on exertion?',o:['No','Sometimes','Yes']},
+   {sec:'Anything else'},
+   {t:'text',q:'Anything else your team should know?'}
  ]}
 };
 const INTAKEORDER=['andro','glp1','peri'];
@@ -901,18 +941,22 @@ function intakeListRender(){
   }).join('');
 }
 function intakeOpen(key){const m=INTAKES[key];
+  const total=m.qs.filter(q=>!q.sec).length;
   const qs=m.qs.map(q=>{
+    if(q.sec)return `<div class="q-sec">${q.sec}</div>`;
     if(q.t==='single'||q.t==='scale')return `<div class="q-block"><div class="qq">${q.q}</div><div class="opts">${q.o.map(o=>`<span class="opt ${q.t==='scale'?'scale':''}" onclick="intakePick(this,false)">${o}</span>`).join('')}</div></div>`;
     if(q.t==='multi')return `<div class="q-block"><div class="qq">${q.q}</div><div class="opts">${q.o.map(o=>`<span class="opt multi" onclick="intakePick(this,true)">${o}</span>`).join('')}</div></div>`;
     if(q.t==='number')return `<div class="q-block"><div class="qq">${q.q}</div><input class="intxt" style="max-width:200px" type="number" inputmode="decimal" placeholder="${q.ph||''}"></div>`;
     return `<div class="q-block"><div class="qq">${q.q}</div><textarea class="intxt" rows="2" placeholder="Optional…"></textarea></div>`;
   }).join('');
-  document.getElementById('intakeModal').innerHTML=`<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div><h2>${m.title}</h2><div class="msub">~${m.time} · sharpens your ${m.sharpen} score. Your answers go to your care team.</div></div><button class="cancel" style="padding:8px 12px" onclick="closeIntake()" aria-label="Close">✕</button></div>${qs}<div class="modact"><button class="cancel" onclick="closeIntake()">Cancel</button><button class="save" onclick="intakeSubmit()">Send to my team</button></div>`;
+  const intro=m.intro?`<div class="i-intro">${m.intro}</div>`:'';
+  const unlock=m.unlocks?`<div class="i-unlock"><span class="rx">${ic('spark',15)}</span><span><b>What this unlocks:</b> ${m.unlocks}</span></div>`:'';
+  document.getElementById('intakeModal').innerHTML=`<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div><h2>${m.title}</h2><div class="msub">~${m.time} · ${total} questions · sharpens your ${m.sharpen} score. Your answers go to your care team.</div></div><button class="cancel" style="padding:8px 12px" onclick="closeIntake()" aria-label="Close">✕</button></div>${intro}${qs}${unlock}<div class="modact"><button class="cancel" onclick="closeIntake()">Cancel</button><button class="save" onclick="intakeSubmit()">Send to my team · +10 pts</button></div>`;
   document.getElementById('intakeOverlay').classList.add('show');document.body.style.overflow='hidden';
 }
 function intakePick(el,multi){if(multi){el.classList.toggle('on');}else{el.parentNode.querySelectorAll('.opt').forEach(o=>o.classList.remove('on'));el.classList.add('on');}}
 function closeIntake(){document.getElementById('intakeOverlay').classList.remove('show');document.body.style.overflow='';}
-function intakeSubmit(){closeIntake();toast('✓ Sent to your care team · they\'ll fold this into your plan');}
+function intakeSubmit(){closeIntake();POINTS+=10;rewardsRender();toast('✓ Sent to your care team · +10 pts ('+baht(POINTS)+') — they\'ll fold this into your plan');}
 
 /* ---- my plan ---- */
 const PLAN=[
@@ -1027,42 +1071,56 @@ function renderNav(){
 function toggleFav(v){if(favSet.has(v))favSet.delete(v);else favSet.add(v);saveNavState();renderNav();}
 function toggleCat(c){if(catCollapsed.has(c))catCollapsed.delete(c);else catCollapsed.add(c);saveNavState();renderNav();}
 
-/* ---------------- level up: points → rewards ---------------- */
-const POINTS=1240;
+/* ---------------- level up: points → Orba credit (฿) ---------------- */
+/* Points are small and baht-linked: 1 point = ฿20 of Orba credit.
+   Everyday actions earn a little; hard, committed effort (streaks, hitting
+   biomarker targets, deep-dives, referrals) earns the most — and the biggest
+   discounts sit behind that sustained effort. */
+const PT_BAHT=20;
+let POINTS=38;
+function baht(pts){return '฿'+(pts*PT_BAHT).toLocaleString();}
+const EARN=[
+ {t:'Daily check-in',pts:1},
+ {t:'7-day streak',pts:3},
+ {t:'Finish a quest',pts:5},
+ {t:'Deep-dive intake',pts:10},
+ {t:'Hit a biomarker target',pts:15},
+ {t:'Refer a friend',pts:25}
+];
 const REWARDS=[
- {t:'฿500 off your next blood draw',cost:1000,ic:'lab',tl:'Quarterly panel'},
- {t:'Priority team consult',cost:800,ic:'team',tl:'Skip the queue'},
- {t:'Orba recovery kit',cost:600,ic:'gift',tl:'Merch + supplements'},
- {t:'InBody body-composition scan',cost:1500,ic:'scan',tl:'Add-on to any visit'},
- {t:'Extra 1:1 coaching call',cost:2000,ic:'chat',tl:'30 min with your coach'},
- {t:'10% off your Loop renewal',cost:2500,ic:'spark',tl:'Annual membership'}
+ {t:'฿500 off your next blood draw',cost:25,ic:'lab',tl:'Quarterly panel'},
+ {t:'Priority team consult',cost:20,ic:'team',tl:'Skip the queue'},
+ {t:'Orba recovery kit',cost:15,ic:'gift',tl:'Merch + supplements'},
+ {t:'InBody body-composition scan',cost:40,ic:'scan',tl:'Add-on to any visit'},
+ {t:'Extra 1:1 coaching call',cost:50,ic:'chat',tl:'30 min with your coach'},
+ {t:'10% off your Loop renewal',cost:75,ic:'spark',tl:'Annual membership'}
 ];
 function rewardsRender(){
+  const el=document.getElementById('rewards');if(!el)return;
   const sorted=[...REWARDS].sort((a,b)=>a.cost-b.cost);
   const next=sorted.find(r=>r.cost>POINTS);
   const pct=next?Math.min(100,Math.round(POINTS/next.cost*100)):100;
   const nextTxt=next?`<b>${next.cost-POINTS} pts</b> to <b>${next.t}</b>`:'You can redeem everything available';
   const hero=`<div class="rewardhero">
     <div class="rh-top">
-      <div class="rh-pts"><span class="n">${POINTS.toLocaleString()}</span><span class="l">points</span></div>
-      <div class="rh-next">${nextTxt}</div>
+      <div class="rh-pts"><span class="n" id="ptsBig">${POINTS}</span><span class="l">points<br><span style="color:#f6d089">= ${baht(POINTS)} credit</span></span></div>
+      <div class="rh-next">${nextTxt}<div style="margin-top:5px;color:var(--muted-2)">1 point = ฿${PT_BAHT} Orba credit</div></div>
     </div>
     <div class="rh-bar"><i style="width:${pct}%"></i></div>
-    <div class="earnrow">
-      <span class="earnchip">Daily check-in <b>+10</b></span>
-      <span class="earnchip">Finish a quest <b>+50</b></span>
-      <span class="earnchip">Deep-dive intake <b>+200</b></span>
-      <span class="earnchip">7-day streak <b>+100</b></span>
-      <span class="earnchip">Refer a friend <b>+1000</b></span>
-    </div></div>`;
+    <div class="earnrow">${EARN.map(e=>`<span class="earnchip">${e.t} <b>+${e.pts}</b></span>`).join('')}</div></div>`;
   const grid=`<div class="redeemgrid">${REWARDS.map((r,i)=>{
     const aff=POINTS>=r.cost;
     const btn=aff?`<button class="rbtn on" onclick="redeem(${i})">Redeem</button>`:`<button class="rbtn off">${r.cost-POINTS} pts to go</button>`;
-    return `<div class="redeem ${aff?'aff':''}"><div class="rtop"><div class="ric">${ic(r.ic,20)}</div><div><div class="rtt">${r.t}</div><div class="rtl">${r.tl}</div></div></div><div class="rbot"><span class="rcost">${r.cost.toLocaleString()} pts</span>${btn}</div></div>`;
+    return `<div class="redeem ${aff?'aff':''}"><div class="rtop"><div class="ric">${ic(r.ic,20)}</div><div><div class="rtt">${r.t}</div><div class="rtl">${r.tl}</div></div></div><div class="rbot"><span class="rcost">${r.cost} pts · ${baht(r.cost)}</span>${btn}</div></div>`;
   }).join('')}</div>`;
-  document.getElementById('rewards').innerHTML=hero+grid;
+  el.innerHTML=hero+grid;
 }
-function redeem(i){const r=REWARDS[i];if(POINTS<r.cost){toast('Not enough points yet');return;}toast('✓ Redeemed · '+r.t+' — code sent to your email & added at your next visit');}
+function awardPoints(n,label){
+  POINTS+=n;
+  toast('+'+n+' pt'+(n>1?'s':'')+' · '+label+' — you now have '+POINTS+' pts ('+baht(POINTS)+')');
+  rewardsRender();
+}
+function redeem(i){const r=REWARDS[i];if(POINTS<r.cost){toast('Not enough points yet — '+(r.cost-POINTS)+' to go');return;}POINTS-=r.cost;toast('✓ Redeemed '+r.t+' ('+baht(r.cost)+') · code sent to your email & applied at your next visit');rewardsRender();}
 
 function showView(v){
   window.__cv=v;
@@ -1101,21 +1159,22 @@ function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t
 document.getElementById('logOverlay').addEventListener('click',e=>{if(e.target.id==='logOverlay')closeLog();});
 
 /* ---------------- check-in ---------------- */
-let ciStep=0,ciFeel=8,ciMeal=null,ciMoodIdx=null;const ciMoods=['😄','🙂','😐','😕'];const ciSeq=['open','synced','adherence','feel','note','payoff'];const ciBackBtn='<button class="ciback" onclick="ciBack()" aria-label="Back">‹</button>';
+let ciStep=0,ciFeel=8,ciMeal=null,ciMoodIdx=null,ciAwarded=false;const ciMoods=['😄','🙂','😐','😕'];const ciSeq=['open','synced','adherence','feel','note','payoff'];const ciBackBtn='<button class="ciback" onclick="ciBack()" aria-label="Back">‹</button>';
 const ciAdh={psy:false,ster:false,om:false,walk:false};
-function ciOpen(){ciStep=0;ciMeal=null;ciMoodIdx=null;for(const k in ciAdh)ciAdh[k]=false;document.getElementById('ciOverlay').classList.add('show');document.body.style.overflow='hidden';ciRender();}
+function ciOpen(){ciStep=0;ciMeal=null;ciMoodIdx=null;ciAwarded=false;for(const k in ciAdh)ciAdh[k]=false;document.getElementById('ciOverlay').classList.add('show');document.body.style.overflow='hidden';ciRender();}
 function ciClose(){document.getElementById('ciOverlay').classList.remove('show');document.body.style.overflow='';}
 function ciDots(){let s='<div class="cidots">';for(let i=0;i<ciSeq.length-2;i++)s+=`<i class="${i<=ciStep-1?'on':''}"></i>`;return s+'</div>';}
 function ciAdhItem(id,icn,t,s){return `<div class="item ${ciAdh[id]?'done':''}" onclick="ciToggle('${id}')"><span class="ic">${ic(icn,18)}</span><span class="tx">${t}<small>${s}</small></span><span class="chk">✓</span></div>`;}
 function ciWord(v){v=+v;return v>=9?'Fantastic':v>=7?'Good — steady energy':v>=5?'A bit flat':v>=3?'Low':'Running on empty';}
 function ciRender(){
   const key=ciSeq[ciStep];let b='';
+  if(key==='payoff'&&!ciAwarded){ciAwarded=true;POINTS+=1;rewardsRender();}
   if(key==='open')b=`<div class="cibody"><div class="cispace"></div><div class="kicker" style="text-align:center">Good morning, Dan</div><div class="ch" style="text-align:center">30 seconds keeps your scores honest.</div><div class="csub" style="text-align:center">Yesterday's plan and this morning's energy — your team sees it today.</div><div style="text-align:center;margin-top:16px"><span class="daychip">${ic('calendar',15)} 12 days running</span></div><div class="cispace"></div><button class="cibtn" onclick="ciNext()">Start check-in</button></div>`;
   else if(key==='synced')b=`<div class="cibody">${ciDots()}<div class="kicker" style="margin-top:12px">While you slept</div><div class="ch">Already in — nothing to log.</div><div class="synced"><div class="row"><span class="ic">${ic('sleep',18)}</span><span class="nm">Sleep</span><span class="vv">7h 12m</span><span class="ck">✓</span></div><div class="row"><span class="ic">${ic('heart',18)}</span><span class="nm">Resting HR</span><span class="vv">58 bpm</span><span class="ck">✓</span></div><div class="row"><span class="ic">${ic('pulse',18)}</span><span class="nm">HRV</span><span class="vv">62 ms</span><span class="ck">✓</span></div><div class="row"><span class="ic">${ic('steps',18)}</span><span class="nm">Steps (yesterday)</span><span class="vv">8,450</span><span class="ck">✓</span></div></div><div class="autotag">⟳ Synced from Oura + Apple Watch</div><div class="cispace"></div><button class="cibtn" onclick="ciNext()">Next</button></div>`;
   else if(key==='adherence')b=`<div class="cibody">${ciDots()}<div class="kicker" style="margin-top:10px">Yesterday</div><div class="ch">How did the plan go?</div><div class="adh"><div class="item" style="cursor:default"><span class="ic">${ic('meal',18)}</span><span class="tx">Mediterranean meals<small>your committed base</small></span><div class="seg"><button class="${ciMeal==='All'?'on':''}" onclick="ciSeg(event)">All</button><button class="${ciMeal==='Some'?'on':''}" onclick="ciSeg(event)">Some</button><button class="${ciMeal==='No'?'on':''}" onclick="ciSeg(event)">No</button></div></div>${ciAdhItem('psy','pill','Psyllium fiber','10 g with water')}${ciAdhItem('ster','pill','Plant sterols','2 g with a meal')}${ciAdhItem('om','fish','Omega-3','1000–4000 mg')}${ciAdhItem('walk','walk','Daily walk','20+ min')}</div><button class="markall" onclick="ciAll()">✓ I did everything</button><div class="cispace"></div><button class="cibtn" onclick="ciNext()">Next</button></div>`;
   else if(key==='feel')b=`<div class="cibody">${ciDots()}<div class="kicker" style="margin-top:10px">This morning</div><div class="ch">How do you feel?</div><div class="feelval" id="ciFeelNum">${ciFeel}</div><div class="feelword" id="ciFeelWord">${ciWord(ciFeel)}</div><input type="range" min="1" max="10" value="${ciFeel}" oninput="ciSetFeel(this.value)"><div class="ends"><span>Drained</span><span>Energised</span></div><div class="moods" id="ciMoods">${ciMoods.map((m,i)=>`<button class="${ciMoodIdx===i?'on':''}" aria-label="mood ${4-i}" onclick="ciMood(${i})">${m}</button>`).join('')}</div><div class="cispace"></div><button class="cibtn" onclick="ciNext()">Next</button></div>`;
   else if(key==='note')b=`<div class="cibody">${ciDots()}<div class="kicker" style="margin-top:10px">Optional</div><div class="ch">Anything for your team?</div><div class="cnote"><textarea placeholder="Sore knee after the walk, sleeping better since cutting coffee earlier…"></textarea></div><div class="cteam"><div class="avs"><span style="background:#7ea2ff">Z</span><span style="background:#43d99a">D</span><span style="background:#f5b544">A</span></div>Zeth, Dan & Anton read every note.</div><div class="cispace"></div><button class="cibtn" onclick="ciNext()">Finish</button><button class="cibtn ghost" onclick="ciNext()">Skip</button></div>`;
-  else if(key==='payoff')b=`<div class="cibody"><div class="cispace"></div><div class="doneRing">✓</div><div class="payh">Done for today, Dan.</div><div class="pays">Your team has your update. See you tomorrow.</div><div class="statgrid"><div class="statc"><div class="n" id="ciMom">82</div><div class="l">Momentum</div></div><div class="statc"><div class="n">13</div><div class="l">days running</div></div></div><div class="insight"><span class="ic">✦</span><span class="tx"><b>6 days of fiber in a row</b> — exactly the lever for your LDL. Your next draw should show it.</span></div><div class="coachnote"><div class="av">D</div><div class="tx"><b>Dan (coach):</b> Nice consistency! Saw the knee note — let's swap one walk for a swim.</div></div><div class="cispace"></div><button class="cibtn" onclick="ciClose()">Back to dashboard</button></div>`;
+  else if(key==='payoff')b=`<div class="cibody"><div class="cispace"></div><div class="doneRing">✓</div><div class="payh">Done for today, Dan.</div><div class="pays">Your team has your update. See you tomorrow.</div><div class="statgrid"><div class="statc"><div class="n" id="ciMom">82</div><div class="l">Momentum</div></div><div class="statc"><div class="n">13</div><div class="l">days running</div></div><div class="statc"><div class="n" style="color:var(--amber)">+1</div><div class="l">point · ฿20 credit</div></div></div><div class="insight"><span class="ic">✦</span><span class="tx"><b>6 days of fiber in a row</b> — exactly the lever for your LDL. Your next draw should show it.</span></div><div class="insight" style="border-color:rgba(245,181,68,0.3)"><span class="ic" style="color:var(--amber)">★</span><span class="tx">You're at <b>${POINTS} points</b> (${baht(POINTS)} Orba credit). Keep your streak and hit your next biomarker target to unlock <b>฿500 off your blood draw</b>.</span></div><div class="coachnote"><div class="av">D</div><div class="tx"><b>Dan (coach):</b> Nice consistency! Saw the knee note — let's swap one walk for a swim.</div></div><div class="cispace"></div><button class="cibtn" onclick="ciClose()">Back to dashboard</button></div>`;
   document.getElementById('ciScreen').innerHTML=`<div class="cicard">${(key!=='open'&&key!=='payoff')?ciBackBtn:''}${b}</div>`;
   if(key==='payoff')setTimeout(()=>{const e=document.getElementById('ciMom');if(e)e.innerHTML='83 <span class="up">▲</span>';},450);
 }
