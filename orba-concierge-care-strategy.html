@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ORBA · Concierge Care Strategy</title>
+<style>
+  :root{
+    --bg:#080b11;--panel:rgba(255,255,255,0.028);--panel-2:rgba(255,255,255,0.05);
+    --border:rgba(255,255,255,0.08);--border-strong:rgba(255,255,255,0.14);
+    --txt:#eef1f6;--muted:#97a0b2;--muted-2:#7a8296;
+    --green:#43d99a;--amber:#f5b544;--red:#f56a63;--blue:#a4c0ff;--blue-solid:#7ea2ff;--purple:#b79cff;
+    --line:#06c755;--wa:#25d366;--imsg:#0a84ff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Arial,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.6}
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(760px 460px at 15% -6%,rgba(90,120,220,0.13),transparent 60%),radial-gradient(680px 520px at 92% 2%,rgba(67,217,154,0.06),transparent 55%)}
+  .wrap{position:relative;z-index:1;max-width:920px;margin:0 auto;padding:56px 28px 100px}
+  .kicker{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--blue);font-weight:700}
+  h1{font-size:34px;font-weight:600;letter-spacing:-0.02em;margin:12px 0 6px;line-height:1.15}
+  .lede{font-size:16px;color:var(--muted);max-width:680px}
+  .meta{font-size:12px;color:var(--muted-2);margin-top:14px;display:flex;gap:14px;flex-wrap:wrap}
+  h2{font-size:13px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:52px 0 4px;padding-top:26px;border-top:1px solid var(--border)}
+  h2 .n{color:var(--blue-solid);margin-right:9px}
+  h3{font-size:20px;font-weight:600;letter-spacing:-0.01em;margin:14px 0 10px}
+  h4{font-size:15px;font-weight:650;margin:18px 0 6px;color:#dfe6f2}
+  p{margin:11px 0;color:#d3d9e5}
+  p.sub{color:var(--muted);font-size:14.5px}
+  strong{color:#fff;font-weight:650}
+  a{color:var(--blue-solid);text-decoration:none;border-bottom:1px solid rgba(126,162,255,0.3)}
+  .card{border:1px solid var(--border);background:var(--panel);border-radius:18px;padding:22px 24px;margin:18px 0}
+  .card.hi{border-color:rgba(126,162,255,0.32);background:linear-gradient(150deg,rgba(126,162,255,0.07),rgba(255,255,255,0.012))}
+  .card.grn{border-color:rgba(67,217,154,0.3);background:linear-gradient(150deg,rgba(67,217,154,0.06),rgba(255,255,255,0.012))}
+  .card.amb{border-color:rgba(245,181,68,0.3);background:linear-gradient(150deg,rgba(245,181,68,0.055),rgba(255,255,255,0.012))}
+  ul{margin:10px 0 10px 2px;padding-left:20px}
+  li{margin:7px 0;color:#d3d9e5}
+  li strong{color:#fff}
+  .tag{display:inline-block;font-size:10px;letter-spacing:.05em;font-weight:700;padding:3px 9px;border-radius:20px;vertical-align:middle}
+  .t-line{color:#04331a;background:var(--line)}
+  .t-wa{color:#053a1a;background:var(--wa)}
+  .t-imsg{color:#03204a;background:var(--imsg)}
+  .t-pri{color:#0a0e14;background:var(--green)}
+  .t-sec{color:var(--amber);border:1px solid rgba(245,181,68,0.4)}
+  .t-p2{color:var(--muted-2);border:1px solid var(--border-strong)}
+  /* channel table */
+  table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+  th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+  th{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  td strong{display:block;margin-bottom:2px}
+  .rec{color:var(--green);font-weight:600}
+  .rec.sec{color:var(--amber)}.rec.p2{color:var(--muted-2)}
+  /* flow diagram */
+  .flow{margin:20px 0;border:1px solid var(--border);border-radius:18px;padding:24px 20px;background:radial-gradient(500px 300px at 50% 0,rgba(45,90,160,0.09),transparent 70%)}
+  .flow-row{display:flex;align-items:stretch;gap:12px;justify-content:center;flex-wrap:wrap}
+  .fbox{flex:1;min-width:150px;max-width:230px;border:1px solid var(--border-strong);border-radius:13px;padding:13px 14px;background:var(--panel-2);text-align:center}
+  .fbox .ft{font-size:13.5px;font-weight:650;color:#fff}
+  .fbox .fd{font-size:11.5px;color:var(--muted);margin-top:3px;line-height:1.4}
+  .fbox.chan{border-color:rgba(67,217,154,0.35)}
+  .fbox.hub{border-color:rgba(126,162,255,0.5);background:linear-gradient(150deg,rgba(126,162,255,0.12),rgba(255,255,255,0.02))}
+  .fbox.team{border-color:rgba(183,156,255,0.45)}
+  .farrow{text-align:center;color:var(--muted-2);font-size:20px;margin:8px 0;letter-spacing:.3em}
+  .flab{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted-2);font-weight:700;text-align:center;margin-bottom:10px}
+  /* phase cards */
+  .phase{display:flex;gap:16px;margin:14px 0;border:1px solid var(--border);border-radius:16px;padding:18px 20px;background:var(--panel)}
+  .phase .pnum{flex:0 0 44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px}
+  .p0 .pnum{background:rgba(67,217,154,0.16);color:var(--green)}
+  .p1 .pnum{background:rgba(126,162,255,0.16);color:var(--blue-solid)}
+  .p2 .pnum{background:rgba(183,156,255,0.16);color:var(--purple)}
+  .phase .pt{font-size:16px;font-weight:650}
+  .phase .pw{font-size:12px;color:var(--muted-2);margin-left:8px;font-weight:500}
+  .phase ul{margin-top:8px}
+  /* feature grid */
+  .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0}
+  .fcard{border:1px solid var(--border);border-radius:15px;padding:17px 18px;background:var(--panel)}
+  .fcard .fh{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;margin-bottom:9px}
+  .fcard.pro .fh{color:var(--green)} .fcard.per .fh{color:var(--blue-solid)}
+  .fcard.fri .fh{color:var(--amber)} .fcard.pre .fh{color:var(--purple)}
+  .fcard ul{margin:0;padding-left:18px}.fcard li{font-size:13.5px;margin:6px 0}
+  .callout{border-left:2px solid var(--blue-solid);background:rgba(126,162,255,0.05);padding:14px 18px;border-radius:0 12px 12px 0;margin:16px 0;font-size:14.5px;color:#dbe2ee}
+  .callout.warn{border-color:var(--amber);background:rgba(245,181,68,0.055)}
+  .callout .lbl{font-weight:700;color:#fff}
+  .src{font-size:12.5px;color:var(--muted-2)}
+  .src a{color:var(--muted);border:none;text-decoration:underline}
+  .foot{margin-top:40px;padding-top:20px;border-top:1px solid var(--border);font-size:12px;color:var(--muted-2)}
+  @media(max-width:640px){.fgrid{grid-template-columns:1fr}h1{font-size:27px}.wrap{padding:36px 18px 80px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="kicker">ORBA · Concierge Care — Strategy Brief</div>
+  <h1>Making the Care Team live: messaging, notifications & concierge service</h1>
+  <p class="lede">How to turn the Care Team screen from a static list into a real, two-way relationship — meeting clients on the channels they already use, routing to your team instantly, and layering the concierge touches that make ORBA feel like nowhere else.</p>
+  <div class="meta"><span>Prepared for Dan · ORBA.Health, Bangkok</span><span>Concept &amp; research brief</span><span>Aug 2026</span></div>
+
+  <div class="card hi">
+    <h3 style="margin-top:0">The one-line recommendation</h3>
+    <p style="margin-bottom:6px"><strong>LINE is your primary channel — it's non-negotiable for a Bangkok clinic.</strong> Pair it with WhatsApp for expats and medical-tourism clients, keep the ORBA app as the clinical source of truth, and route everything through one unified inbox that pings your care team in Slack and mirrors the conversation back into the app. Start by <em>buying</em> an omnichannel layer to launch in weeks; bring chat natively into the app in phase two. Then wrap it in proactive, data-triggered outreach — that's the part competitors can't copy.</p>
+  </div>
+
+  <h2><span class="n">01</span>The concierge principle</h2>
+  <p>Concierge isn't a faster help desk. It's the feeling that <strong>one team already knows you and is looking out for you</strong> — so you never have to think about <em>how</em> to reach them, wait in a queue, or repeat your history. Every design choice below serves three tests:</p>
+  <ul>
+    <li><strong>Meet them where they are.</strong> The client uses their own everyday app; ORBA does the work of unifying it behind the scenes.</li>
+    <li><strong>One relationship, remembered.</strong> Whoever replies has the full picture — biomarkers, plan, last conversation — and it feels personal, not ticketed.</li>
+    <li><strong>Proactive, not reactive.</strong> The most premium moments are when ORBA reaches out first: "we saw your sleep dip this week — here's what we'd tweak."</li>
+  </ul>
+  <p class="sub">The messaging plumbing is table stakes. The differentiation is what you <em>do</em> with the always-on channel once it exists.</p>
+
+  <h2><span class="n">02</span>The channel decision — start with Thailand reality</h2>
+  <p>This is the most important strategic call, and the data makes it clear. <strong>LINE dominates Thailand</strong> — roughly <strong>47–56 million users, ~67%+ of the population</strong>, making Thailand LINE's second-strongest market in the world after Japan. It cuts across every age and income band. WhatsApp, by contrast, has ~12M Thai users and skews heavily to <strong>expats and international communicators</strong>. For an affluent, mixed Thai-and-expat longevity clientele, that means a deliberate two-channel core, not a single pick.</p>
+
+  <table>
+    <thead><tr><th>Channel</th><th>Who it's for at ORBA</th><th>Business capability</th><th>Verdict</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>LINE <span class="tag t-line">LINE</span></strong></td>
+        <td>Your Thai clients — the majority. The everyday app they already live in.</td>
+        <td>Official Account + Messaging API, rich menus, broadcast, LINE Login, LINE Pay, and <strong>LIFF</strong> (run the ORBA web app <em>inside</em> LINE) + MINI Apps.</td>
+        <td class="rec">Primary <span class="tag t-pri">CORE</span></td>
+      </tr>
+      <tr>
+        <td><strong>WhatsApp <span class="tag t-wa">WA</span></strong></td>
+        <td>Expats, international &amp; medical-tourism clients; anyone booking from abroad.</td>
+        <td>WhatsApp Business Platform (Cloud API). Free-form replies inside a <strong>24-hour window</strong>; pre-approved <strong>template messages</strong> to re-open contact; explicit opt-in required.</td>
+        <td class="rec">Primary <span class="tag t-pri">CORE</span></td>
+      </tr>
+      <tr>
+        <td><strong>In-app chat</strong></td>
+        <td>Everyone — the clinical record of the conversation, tied to biomarkers &amp; plan.</td>
+        <td>Native chat inside ORBA (built on Twilio/Sendbird, phase 2). Full context, attachments, results, booking — no channel limits.</td>
+        <td class="rec">Source of truth</td>
+      </tr>
+      <tr>
+        <td><strong>iMessage <span class="tag t-imsg">iMsg</span></strong></td>
+        <td>High-end iPhone users who prefer native Messages; a premium, polished touch.</td>
+        <td>Apple Messages for Business — requires an approved Messaging Service Provider (MSP) partner and Apple registration. Higher setup friction.</td>
+        <td class="rec sec">Phase-2 premium <span class="tag t-sec">LATER</span></td>
+      </tr>
+      <tr>
+        <td><strong>SMS / email</strong></td>
+        <td>Universal fallback; appointment reminders; anyone off the above.</td>
+        <td>Reliable, no opt-in friction for transactional; low richness.</td>
+        <td class="rec p2">Fallback <span class="tag t-p2">SAFETY NET</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout"><span class="lbl">Sleeper advantage — LIFF.</span> LINE's Front-end Framework lets you run the actual ORBA app (dashboard, results, booking, the Level Up rewards) <em>inside</em> a LINE chat. A Thai client can message their team and open their biomarkers in the same place they text friends — no separate app install needed. That is a genuinely concierge-grade, Thailand-specific move most Western health apps can't make.</p></div>
+
+  <h2><span class="n">03</span>The architecture — "one thread, everywhere"</h2>
+  <p>The trap is running four disconnected inboxes. The concierge pattern is a single <strong>omnichannel layer</strong>: no matter which app the client uses, it becomes one continuous conversation keyed to their patient record, your team is notified in one place, and the reply lands back on the client's channel <em>and</em> in the ORBA app timeline.</p>
+
+  <div class="flow">
+    <div class="flab">Client side — their choice of app</div>
+    <div class="flow-row">
+      <div class="fbox chan"><div class="ft">LINE</div><div class="fd">Most Thai clients</div></div>
+      <div class="fbox chan"><div class="ft">WhatsApp</div><div class="fd">Expats · int'l</div></div>
+      <div class="fbox chan"><div class="ft">ORBA app chat</div><div class="fd">In-context</div></div>
+      <div class="fbox chan"><div class="ft">iMessage / SMS</div><div class="fd">Premium · fallback</div></div>
+    </div>
+    <div class="farrow">↓ ↓ ↓</div>
+    <div class="flow-row">
+      <div class="fbox hub" style="max-width:520px"><div class="ft">Omnichannel messaging layer</div><div class="fd">One unified conversation per client · keyed to their record · AI triage &amp; draft replies · everything logged</div></div>
+    </div>
+    <div class="farrow">↓</div>
+    <div class="flow-row">
+      <div class="fbox team"><div class="ft">Slack care-team alert</div><div class="fd">New message + client context + urgency + SLA timer; reply from Slack</div></div>
+      <div class="fbox team"><div class="ft">Care console</div><div class="fd">Full inbox with patient record, history, assignment</div></div>
+      <div class="fbox team"><div class="ft">ORBA app timeline</div><div class="fd">Conversation mirrored beside biomarkers &amp; plan</div></div>
+    </div>
+    <div class="farrow">↺</div>
+    <div class="flow-row"><div class="fbox" style="max-width:520px;border-style:dashed"><div class="fd">Team reply routes back to the client's original channel — LINE stays LINE, WhatsApp stays WhatsApp — and is saved to the record for continuity &amp; PDPA audit.</div></div></div>
+  </div>
+
+  <p class="sub">The principle: <strong>the client picks the channel; ORBA owns the thread.</strong> A new coach picking up next month sees the whole story. Nothing lives only in one person's phone.</p>
+
+  <h2><span class="n">04</span>Build vs buy — concrete options</h2>
+  <p>You don't have to choose forever. The smart path is <strong>buy to launch, build to differentiate.</strong></p>
+
+  <h4>Option A — Off-the-shelf omnichannel inbox (fastest, launch in weeks)</h4>
+  <ul>
+    <li><strong>Respond.io</strong> — Malaysia-based, built for exactly this region. Native LINE + WhatsApp + Messenger + Instagram, AI automation, and a dedicated healthcare vertical. Strong default for a Bangkok clinic.</li>
+    <li><strong>SleekFlow</strong> — Hong Kong / SEA focused, strong LINE + WhatsApp + payments; popular with Asian consumer brands.</li>
+    <li><strong>Trengo / Rasayel / Bird (ex-MessageBird)</strong> — capable omnichannel inboxes; Bird also offers deeper programmable APIs if you outgrow the inbox.</li>
+  </ul>
+  <p class="sub">These give you a shared team inbox, assignment, canned replies, basic automation and Slack alerts out of the box. Best for validating the concierge model quickly before investing in a build.</p>
+
+  <h4>Option B — Programmable / embed-in-the-app (native concierge feel)</h4>
+  <ul>
+    <li><strong>Twilio Conversations API + Flex</strong> — stitches SMS, WhatsApp, chat and more into one programmable thread; lets chat live natively inside the ORBA app with your own data and UI.</li>
+    <li><strong>Sendbird</strong> — chat/messaging SDK purpose-built to embed rich chat (and increasingly AI agents) directly in your app.</li>
+    <li><strong>Sinch / Bird APIs</strong> — enterprise messaging infrastructure across channels including LINE.</li>
+  </ul>
+  <p class="sub">Best when chat must sit beside the biomarker dashboard, inside your brand, with your data model — the phase-2 destination.</p>
+
+  <div class="callout warn"><span class="lbl">On "Hermes."</span> I want to be straight: I'm not certain which product you meant — there are a few tools by that name, so I don't want to overstate. But the capability you're describing — a new client message firing an alert into a Slack care channel, with the team replying from Slack and it round-tripping to the client — is <strong>standard</strong> and every option above supports it (natively, or via a Slack webhook/bot). If Hermes is a specific tool your team already uses, tell me and I'll slot it into the architecture precisely.</p></div>
+
+  <h2><span class="n">05</span>The Slack side — how the team actually works</h2>
+  <p>Slack is the right internal hub — your team already lives there and it keeps clinicians out of yet another console for routine triage. The pattern that feels concierge from the inside:</p>
+  <ul>
+    <li><strong>Rich inbound alert.</strong> Every new client message posts to a triage channel with context attached: name, plan tier, last biomarker flags, the message, an <strong>urgency tag</strong> (AI-classified) and a live <strong>SLA countdown</strong>.</li>
+    <li><strong>Reply in-thread → client gets it.</strong> The assigned team member answers in the Slack thread; it routes back to the client's LINE/WhatsApp and saves to the record. No copy-paste, no app-switching.</li>
+    <li><strong>Ownership &amp; on-call.</strong> "Claimed by Dr. Zeth," round-robin or on-call assignment, and escalation if a clinical-urgent tag isn't picked up within minutes.</li>
+    <li><strong>Guardrails.</strong> Unanswered-message nudges, a daily digest of open threads, and after-hours routing to whoever's on call — so nothing goes quiet.</li>
+  </ul>
+
+  <h2><span class="n">06</span>The response model — what makes it feel like concierge</h2>
+  <ul>
+    <li><strong>A named team, not a helpline.</strong> You already have Dr. Zeth, Dan and Anton in the app — lean all the way in. The client messages <em>people</em>, with faces and roles, who greet them by name.</li>
+    <li><strong>Visible, tiered SLAs.</strong> Show "typically replies within…" in-app, and hold different promises by urgency (clinical-urgent in minutes; general within hours). Meeting a stated promise is what reads as premium.</li>
+    <li><strong>Async-first, with depth on tap.</strong> Most contact is quick text; but a "book a 15-min video with your coach" button in the thread turns any conversation into a consult when it matters.</li>
+    <li><strong>Human-in-the-loop AI.</strong> AI acknowledges instantly, triages, and drafts a reply in the team's voice — a human owns and sends anything clinical. Speed of a bot, judgment of a doctor.</li>
+  </ul>
+
+  <h2><span class="n">07</span>Concierge beyond messaging — the real differentiators</h2>
+  <p>Two-way chat is the enabler. These are the moments that make members tell their friends about ORBA.</p>
+
+  <div class="fgrid">
+    <div class="fcard pro"><div class="fh">◆ Proactive — reach out first</div><ul>
+      <li>"We noticed" data triggers: biomarker drift, a poor-sleep streak, a missed check-in → the team reaches out before the client asks.</li>
+      <li>Pre-visit prep &amp; a same-day post-visit recap with next steps.</li>
+      <li>Supplement refill / re-order nudges tied to the Stack supply counter.</li>
+      <li>Seasonal &amp; travel health ("you're flying next week — here's your protocol").</li>
+    </ul></div>
+    <div class="fcard per"><div class="fh">◆ Personal — one relationship</div><ul>
+      <li>A dedicated care manager who owns the relationship end-to-end.</li>
+      <li>Context that carries: the thread remembers everything, so no one re-asks.</li>
+      <li>Birthday, milestone &amp; "one year with ORBA" touches.</li>
+      <li>Family / household accounts; Thai &amp; English fluently, by preference.</li>
+    </ul></div>
+    <div class="fcard fri"><div class="fh">◆ Frictionless — remove every step</div><ul>
+      <li>One-tap booking &amp; priority slots straight from the chat thread.</li>
+      <li>In-app video consults; results delivered <em>with interpretation</em>, not just numbers.</li>
+      <li>Home phlebotomy &amp; lab logistics arranged in-thread.</li>
+      <li>In-app payment via LINE Pay / PromptPay — no invoices to chase.</li>
+    </ul></div>
+    <div class="fcard pre"><div class="fh">◆ Premium — the white-glove layer</div><ul>
+      <li>Medical-tourism concierge: airport pickup, hotel &amp; itinerary coordination for visiting clients.</li>
+      <li>24/7 line for members; second-opinion &amp; global specialist referral.</li>
+      <li>Wearable-data monitoring with proactive alerts ("your resting HR is up 3 days running").</li>
+      <li>VIP scheduling, private lounge, and a real human who answers, always.</li>
+    </ul></div>
+  </div>
+
+  <h2><span class="n">08</span>AI as the concierge amplifier</h2>
+  <p>Used well, AI is what lets a small team feel omnipresent — <strong>without</strong> ever replacing the human judgment clients are paying for.</p>
+  <ul>
+    <li><strong>Instant triage &amp; routing</strong> — classify urgency and topic, route to the right person, start the SLA clock.</li>
+    <li><strong>Draft replies in your team's voice</strong> — the clinician edits &amp; sends; nothing clinical goes out unread.</li>
+    <li><strong>After-hours coverage</strong> — answer FAQs immediately with an honest "a human on your team will follow up in the morning."</li>
+    <li><strong>Context on tap</strong> — whoever picks up gets an instant summary of the client's history and "what changed since we last spoke."</li>
+  </ul>
+  <p class="sub">Ties directly to your existing <em>Ask ORBA</em> screen — that becomes the client-facing AI, while the same engine quietly assists the team behind the scenes.</p>
+
+  <h2><span class="n">09</span>Trust &amp; compliance — Thailand PDPA</h2>
+  <p>Health data is <strong>sensitive personal data</strong> under Thailand's PDPA, which raises the bar — and handled well, becomes a trust asset rather than a burden. The PDPC is also consulting on a healthcare-specific guideline, so expect the standard to tighten.</p>
+  <ul>
+    <li><strong>Explicit, per-channel consent</strong> to message on LINE / WhatsApp / etc., captured at onboarding and revocable.</li>
+    <li><strong>Keep detailed clinical results in the app, not in third-party chats.</strong> Best practice: message "you have a new result — open ORBA to view," with a secure deep-link, rather than sending lab values over LINE.</li>
+    <li><strong>Data processing agreements</strong> with every vendor, a named DPO, full <strong>audit trail</strong>, retention limits and attention to data residency.</li>
+  </ul>
+  <div class="callout"><span class="lbl">Positioning.</span> Make privacy visible: "Your results stay in ORBA. We'll only ever ping you to open the app." For a longevity clientele handing you their most intimate data, that discipline is part of the concierge promise.</p></div>
+
+  <h2><span class="n">10</span>Recommended roadmap</h2>
+
+  <div class="phase p0"><div class="pnum">0</div><div>
+    <span class="pt">Launch the live channel</span><span class="pw">~weeks · buy</span>
+    <ul>
+      <li>Stand up a LINE Official Account + WhatsApp Business, with PDPA consent in onboarding.</li>
+      <li>Connect an omnichannel inbox (Respond.io or SleekFlow) → Slack triage with context, urgency tags &amp; SLAs.</li>
+      <li>Turn the app's "Message your team" into a deep-link to the client's chosen channel; put real faces &amp; "typically replies in…" on the Care Team screen.</li>
+    </ul>
+  </div></div>
+
+  <div class="phase p1"><div class="pnum">1</div><div>
+    <span class="pt">Make it intelligent &amp; proactive</span><span class="pw">~1–2 quarters</span>
+    <ul>
+      <li>AI triage + draft replies in the team's voice; after-hours auto-acknowledge.</li>
+      <li>Data-triggered proactive outreach (biomarker drift, sleep streaks, refill nudges from the Stack).</li>
+      <li>Mirror the conversation into the app timeline beside biomarkers &amp; plan.</li>
+    </ul>
+  </div></div>
+
+  <div class="phase p2"><div class="pnum">2</div><div>
+    <span class="pt">Native, white-glove concierge</span><span class="pw">~2–4 quarters</span>
+    <ul>
+      <li>Bring chat natively in-app (Twilio Conversations / Sendbird) + in-app video consults.</li>
+      <li>Add iMessage for premium iPhone members; dedicated care-manager assignment.</li>
+      <li>Medical-tourism concierge module; wearable-monitoring alerts; LINE Pay / PromptPay in-app payments; LIFF mini-app for Thai clients.</li>
+    </ul>
+  </div></div>
+
+  <h2><span class="n">11</span>How it shows up in the ORBA app</h2>
+  <p>Concretely, the Care Team screen evolves from a roster into a living surface:</p>
+  <ul>
+    <li><strong>Presence &amp; a real thread</strong> — "Dr. Zeth · online," typing indicators, read receipts, and a channel badge showing it's synced to LINE / WhatsApp.</li>
+    <li><strong>Everything in reach</strong> — attach a result, book a visit, or start a video call from inside the conversation.</li>
+    <li><strong>Proactive cards from the team</strong> — the same surface where ORBA reaches out first, so the relationship feels alive even when the client hasn't messaged.</li>
+    <li><strong>A visible promise</strong> — "typically replies within 2 hours · urgent clinical within 15 min," so the concierge standard is stated, not just hoped for.</li>
+  </ul>
+
+  <div class="foot">
+    <p style="color:var(--muted);margin-bottom:8px"><strong style="color:#fff">Sources</strong></p>
+    <p class="src">
+      LINE / Thailand market: <a href="https://hashmeta.com/blog/line-vs-whatsapp-a-comprehensive-messaging-app-comparison-for-thailand/">Hashmeta — LINE vs WhatsApp in Thailand</a> · <a href="https://www.businessofapps.com/data/line-statistics/">Business of Apps — LINE statistics</a> · <a href="https://www.meltwater.com/en/blog/social-media-statistics-thailand">Meltwater — Thailand social stats 2025</a><br>
+      LINE developer capabilities (Messaging API, LIFF): <a href="https://developers.line.biz/en/">LINE Developers</a> · <a href="https://www.cipher.co.th/en/blogs/liff/">Cipher — LIFF explainer</a><br>
+      WhatsApp Business Platform (24-hr window, templates): <a href="https://www.twilio.com/docs/whatsapp/key-concepts">Twilio — WhatsApp key concepts</a> · <a href="https://developers.facebook.com/documentation/business-messaging/whatsapp/messages/send-messages">Meta for Developers — WhatsApp messaging</a><br>
+      Apple Messages for Business: <a href="https://register.apple.com/resources/messages/msp-onboarding/">Apple — MSP onboarding</a> · <a href="https://www.zendesk.com/service/messaging/apple-messages-for-business/">Zendesk — AMB guide</a><br>
+      Omnichannel &amp; embed platforms: <a href="https://respond.io/industry/healthcare">Respond.io — healthcare</a> · <a href="https://www.twilio.com/en-us/messaging/apis/conversations-api">Twilio Conversations API</a><br>
+      Thailand PDPA (health/sensitive data): <a href="https://www.onetrust.com/blog/the-ultimate-guide-to-thai-pdpa-compliance/">OneTrust — Thai PDPA guide</a> · <a href="https://www.hlc.com/en/publications/thailand-pdpc-consults-on-first-healthcarespecific-data-protection-guideline">HLC — PDPC healthcare guideline consultation</a>
+    </p>
+    <p class="src" style="margin-top:14px;color:var(--muted-2)">ORBA.Health concept brief · figures are indicative and change over time — verify vendor capabilities &amp; current PDPA guidance before committing. Not legal advice.</p>
+  </div>
+
+</div>
+</body>
+</html>
