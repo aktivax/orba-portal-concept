@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orba Health · Concept</title>
+<style>
+  :root{
+    --bg:#080b11;--panel:rgba(255,255,255,0.028);--panel-2:rgba(255,255,255,0.05);
+    --border:rgba(255,255,255,0.07);--border-strong:rgba(255,255,255,0.13);
+    --txt:#eef1f6;--muted:#8b94a6;--muted-2:#7a8296;
+    --green:#43d99a;--amber:#f5b544;--red:#f56a63;--blue:#a4c0ff;--blue-solid:#7ea2ff;--purple:#b79cff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Arial,sans-serif;-webkit-font-smoothing:antialiased;display:flex;min-height:100vh;overflow-x:hidden}
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(720px 460px at 18% -6%,rgba(90,120,220,0.12),transparent 60%),radial-gradient(680px 520px at 88% 4%,rgba(67,217,154,0.05),transparent 55%)}
+  a{color:inherit}
+
+  /* sidebar */
+  .sidebar{width:238px;flex:0 0 238px;position:sticky;top:0;height:100vh;border-right:1px solid var(--border);display:flex;flex-direction:column;padding:22px 16px;z-index:5;background:rgba(8,11,17,0.7);backdrop-filter:blur(6px)}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:17px;padding:4px 8px 20px}
+  .brand .logo{width:22px;height:22px;border-radius:50%;border:2px solid #cfd6e4;border-top-color:transparent;transform:rotate(20deg)}
+  .nav{display:flex;flex-direction:column;gap:2px}
+  .nav a{display:flex;align-items:center;gap:12px;padding:9px 12px;border-radius:10px;color:var(--muted);text-decoration:none;font-size:14px;font-weight:500;transition:.15s;cursor:pointer}
+  .nav a svg{width:18px;height:18px;flex:0 0 18px;opacity:.8}
+  .nav a:hover{color:var(--txt);background:rgba(255,255,255,0.03)}
+  .nav a.active{color:#bcd0ff;background:rgba(126,162,255,0.12)}
+  .nav a.active svg{opacity:1}
+  .tag{margin-left:auto;font-size:9px;letter-spacing:.05em;font-weight:700;padding:2px 6px;border-radius:6px}
+  .tag.new{color:#0a0e14;background:var(--green)}
+  .tag.pur{color:#160a2e;background:var(--purple)}
+  .tag.soon{color:var(--muted-2);border:1px solid var(--border)}
+  .checkinBtn{margin:16px 4px 4px;display:flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(120deg,#43d99a,#7ea2ff);color:#08131f;border:none;font-weight:700;font-size:14px;padding:11px;border-radius:12px;cursor:pointer}
+  .spacer{flex:1}
+  .draw{display:flex;align-items:center;gap:10px;padding:9px 12px;margin-bottom:2px}
+  .draw .t1{font-size:13px;color:var(--muted)}.draw .t2{font-size:12px;color:var(--red);font-weight:600}
+  .draw .book{margin-left:auto;background:rgba(245,106,99,0.16);color:#ff9a94;font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;cursor:pointer}
+  .foot a{display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:10px;color:var(--muted);text-decoration:none;font-size:14px;cursor:pointer}
+  .foot a svg{width:17px;height:17px;flex:0 0 17px;opacity:.8}
+  .user{display:flex;align-items:center;gap:11px;padding:11px 8px 2px;margin-top:6px;border-top:1px solid var(--border)}
+  .user .av{width:30px;height:30px;border-radius:50%;background:linear-gradient(140deg,#2b3550,#1a2033);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#c8d3ea}
+  .user .nm{font-size:14px;font-weight:600}.user .sub{font-size:12px;color:var(--muted-2)}
+
+  .main{flex:1;min-width:0;position:relative;z-index:1;padding:34px 44px 90px;max-width:1200px}
+  .view{display:none}
+  h1{font-size:29px;font-weight:600;letter-spacing:-0.01em;display:flex;align-items:center;gap:11px}
+  .concept{font-size:10px;letter-spacing:.08em;font-weight:700;color:var(--blue);border:1px solid rgba(126,162,255,0.4);padding:3px 8px;border-radius:20px}
+  .concept.pur{color:var(--purple);border-color:rgba(183,156,255,0.45)}
+  .subline{color:var(--muted);font-size:14px;margin-top:7px;max-width:680px;line-height:1.5}
+  .head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap}
+  .btn{background:var(--blue-solid);color:#0a1024;border:none;font-weight:600;font-size:14px;padding:11px 17px;border-radius:12px;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+  .btn:hover{filter:brightness(1.05)}
+  .btn.soft{background:rgba(126,162,255,0.16);color:#cfd9ff}
+  .card{border:1px solid var(--border);background:var(--panel);border-radius:20px;padding:24px}
+  .green{color:var(--green)}.amber{color:var(--amber)}.red{color:var(--red)}
+  .bg-green{background:var(--green)}.bg-amber{background:var(--amber)}.bg-red{background:var(--red)}
+  .status{font-size:10px;letter-spacing:.05em;font-weight:700;padding:4px 9px;border-radius:20px;display:inline-block}
+  .st-green{color:var(--green);background:rgba(67,217,154,0.12)}
+  .st-amber{color:var(--amber);background:rgba(245,181,68,0.12)}
+  .st-red{color:var(--red);background:rgba(245,106,99,0.12)}
+  .sectitle{font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:8px 2px 14px}
+
+  /* rings */
+  .ring{position:relative}
+  .ring .v{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .ring .num{font-weight:700;letter-spacing:-0.02em;line-height:1}
+  .ring .num .dim{color:var(--muted-2)}
+  .ring .cap{font-size:10px;color:var(--muted);margin-top:5px;letter-spacing:.08em;text-transform:uppercase;font-weight:700}
+
+  /* dashboard */
+  .hero2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}
+  .attn{display:flex;gap:14px;align-items:flex-start;margin-top:22px;border:1px solid rgba(245,106,99,0.32);background:linear-gradient(120deg,rgba(245,106,99,0.09),rgba(255,255,255,0.01));border-radius:16px;padding:16px 18px}
+  .attn-ic{width:30px;height:30px;flex:0 0 30px;border-radius:9px;background:rgba(245,106,99,0.18);color:var(--red);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px}
+  .attn-body{flex:1}.attn-t{font-size:14px;color:#e7ecf3;line-height:1.5}.attn-t a{color:var(--blue);cursor:pointer;font-weight:600}.attn-sub{font-size:12px;color:var(--muted);margin-top:6px;display:flex;align-items:center;gap:7px}
+  @media(max-width:640px){.attn{flex-wrap:wrap}.attn .btn{width:100%;justify-content:center}}
+  .ringcard{border:1px solid var(--border);background:var(--panel);border-radius:20px;padding:24px;display:flex;align-items:center;gap:22px;position:relative;overflow:hidden}
+  .ringcard.live{border-color:rgba(67,217,154,0.28);background:linear-gradient(160deg,rgba(67,217,154,0.06),rgba(255,255,255,0.015))}
+  .ringcard .glow{position:absolute;width:210px;height:210px;border-radius:50%;filter:blur(60px);opacity:.4;right:-40px;top:-60px;background:var(--green);pointer-events:none}
+  .rc .label{font-size:11px;letter-spacing:.1em;color:var(--muted);font-weight:700;text-transform:uppercase}
+  .rc h3{font-size:18px;font-weight:600;margin:7px 0 5px}
+  .rc .delta{font-size:13px;font-weight:600}
+  .rc .meta{font-size:12px;color:var(--muted-2);margin-top:9px;line-height:1.5}
+  .sysgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-top:14px}
+  .bodymapwrap{margin-top:16px;border:1px solid var(--border);background:radial-gradient(520px 380px at 50% 42%,rgba(45,90,160,0.10),transparent 70%),var(--panel);border-radius:20px;padding:14px 10px 6px;overflow:hidden}
+  .bodymapwrap svg{display:block;max-width:940px;margin:0 auto}
+  .sys{border:1px solid var(--border);background:var(--panel);border-radius:15px;padding:15px 16px}
+  .sys .nm{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:7px}
+  .sys .row{display:flex;align-items:baseline;gap:6px;margin-top:8px}
+  .sys .p{font-size:23px;font-weight:600}.sys .s{font-size:10px;font-weight:700;letter-spacing:.05em;margin-left:auto}
+  .sys .bar{height:5px;border-radius:4px;background:rgba(255,255,255,0.08);margin-top:10px;overflow:hidden}
+  .sys .bar i{display:block;height:100%;border-radius:4px}
+
+  /* tables */
+  .tablewrap{border:1px solid var(--border);background:var(--panel);border-radius:18px;overflow:hidden;margin-top:22px}
+  table{width:100%;border-collapse:collapse}
+  thead th{text-align:left;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;padding:15px 20px;border-bottom:1px solid var(--border)}
+  thead th.r{text-align:right}
+  tbody tr{border-bottom:1px solid rgba(255,255,255,0.045);transition:.12s}
+  tbody tr:last-child{border-bottom:none}
+  tbody tr.click{cursor:pointer}
+  tbody tr.click:hover{background:rgba(255,255,255,0.028)}
+  tbody tr.sel{background:rgba(126,162,255,0.07);box-shadow:inset 3px 0 0 var(--blue-solid)}
+  td{padding:14px 20px;font-size:14px;vertical-align:middle}
+  .mk{display:flex;align-items:center;gap:11px}
+  .mk .dot{width:8px;height:8px;border-radius:50%;flex:0 0 8px}
+  .mk .nm{font-weight:600}.mk .nm small{display:block;font-weight:400;color:var(--muted-2);font-size:12px;margin-top:1px}
+  .badge{font-size:9px;letter-spacing:.04em;font-weight:700;color:#0a0e14;background:var(--green);padding:2px 6px;border-radius:5px;margin-left:7px;vertical-align:middle}
+  .badge.blue{background:var(--blue)}
+  .cat{color:var(--muted)}.tgt{color:var(--muted)}.val{font-weight:600}.val .u{color:var(--muted-2);font-size:12px;font-weight:400;margin-left:2px}
+  td.tr{width:150px}.miniwrap{display:flex;align-items:center;gap:8px;justify-content:flex-end}.delta{font-size:12px;font-weight:600}
+  .chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:18px}
+  .chip{font-size:12px;color:var(--muted);border:1px solid var(--border);background:transparent;padding:6px 12px;border-radius:20px;cursor:pointer}
+  .chip.on{background:var(--panel-2);color:var(--txt);border-color:var(--border-strong)}
+
+  /* visual change chart */
+  .chartcard{margin-top:24px;border:1px solid var(--border);background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.006));border-radius:22px;padding:24px 26px 22px;position:relative;overflow:hidden}
+  .cc-glow{position:absolute;width:340px;height:200px;border-radius:50%;filter:blur(70px);opacity:.26;right:-60px;top:-70px;background:var(--green);pointer-events:none}
+  .cc-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .cc-title{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700}
+  .cc-val{display:flex;align-items:baseline;gap:10px;margin-top:8px}
+  .cc-val .big{font-size:42px;font-weight:700;letter-spacing:-0.02em;line-height:1}.cc-val .u{font-size:15px;color:var(--muted)}
+  .cc-val .status{transform:translateY(-6px)}
+  .cc-delta{text-align:right}.cc-delta .d{font-size:21px;font-weight:700}.cc-delta .lab{font-size:12px;color:var(--muted-2);margin-top:2px}
+  .segline{stroke-dasharray:1400;stroke-dashoffset:1400;animation:draw 1.1s ease forwards}
+  @keyframes draw{to{stroke-dashoffset:0}}
+  svg .pulse{animation:pulse 2s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:.25}50%{opacity:.05}}
+  .toGoal{margin-top:20px;background:rgba(255,255,255,0.025);border:1px solid var(--border);border-radius:16px;padding:16px 18px}
+  .toGoal .tg-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
+  .toGoal .tg-top .l{font-size:13px;color:var(--muted)}.toGoal .tg-top .l b{color:var(--txt)}
+  .toGoal .tg-top .pct{font-size:13px;font-weight:700;color:var(--green)}
+  .track{position:relative;height:12px;border-radius:8px;background:rgba(255,255,255,0.07)}
+  .track .fill{position:absolute;left:0;top:0;bottom:0;border-radius:8px;background:linear-gradient(90deg,#2f9e77,var(--green));width:0;transition:width 1s cubic-bezier(.2,.7,.2,1)}
+  .track .now{position:absolute;top:50%;width:18px;height:18px;border-radius:50%;background:#fff;border:3px solid #0a0e15;transform:translate(-50%,-50%);box-shadow:0 2px 8px rgba(0,0,0,.5);left:0;transition:left 1s cubic-bezier(.2,.7,.2,1)}
+  .track .flag{position:absolute;right:-2px;top:-26px;font-size:16px}
+  .tg-ends{display:flex;justify-content:space-between;margin-top:9px;font-size:12px;color:var(--muted-2)}.tg-ends b{color:var(--muted)}
+
+  /* body tiles */
+  .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-top:14px}
+  .tile{border:1px solid var(--border);background:var(--panel);border-radius:16px;padding:14px 15px 11px;cursor:pointer;transition:.15s}
+  .tile:hover{border-color:var(--border-strong);background:var(--panel-2);transform:translateY(-2px)}
+  .tile.sel{border-color:var(--blue-solid);box-shadow:0 0 0 1px rgba(126,162,255,0.35) inset}
+  .tile .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+  .tile .tn{font-size:12px;color:var(--muted);font-weight:500;display:flex;align-items:center;gap:7px}
+  .tile .src{font-size:9px;letter-spacing:.03em;color:var(--muted-2);border:1px solid var(--border);padding:2px 6px;border-radius:6px}
+  .tile .src.dev{color:#9fb4e8;border-color:rgba(126,162,255,0.3)}
+  .tile .valrow{display:flex;align-items:baseline;gap:5px}.tile .tv{font-size:22px;font-weight:600}.tile .tu{font-size:11px;color:var(--muted)}
+  .tile .st{font-size:10px;letter-spacing:.05em;font-weight:700;margin-left:auto;align-self:flex-end;padding-bottom:4px}
+  .tile .foot{display:flex;align-items:center;justify-content:space-between;margin-top:7px}.tile .tt{font-size:11px;color:var(--muted-2)}.tile .td{font-size:11px;font-weight:600}
+  .explain{font-size:12px;color:var(--muted);background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:13px 16px;margin:14px 0 4px;line-height:1.55}.explain b{color:#cdd6e6}
+
+  /* levelup */
+  .hero{display:grid;grid-template-columns:340px 1fr;gap:18px;margin-top:24px}
+  .strengthcard{display:flex;flex-direction:column;align-items:center;text-align:center;background:linear-gradient(170deg,rgba(183,156,255,0.08),rgba(255,255,255,0.012))}
+  .level{font-size:19px;font-weight:600;margin-top:8px}.level .lv{color:var(--purple)}.next{font-size:12px;color:var(--muted-2);margin-top:6px}
+  .tt-title{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:20px}
+  .steps{display:flex;align-items:flex-start;position:relative}
+  .stp{flex:1;text-align:center;position:relative}
+  .stp .bar{position:absolute;top:15px;left:-50%;width:100%;height:3px;background:rgba(255,255,255,0.1)}.stp .bar.fill{background:var(--green)}.stp:first-child .bar{display:none}
+  .stp .node{width:32px;height:32px;border-radius:50%;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;position:relative;z-index:1;border:2px solid var(--border-strong);background:#0d1119;color:var(--muted)}
+  .stp.done .node{background:var(--green);border-color:var(--green);color:#062015}
+  .stp.cur .node{background:var(--purple);border-color:var(--purple);color:#160a2e;box-shadow:0 0 0 5px rgba(183,156,255,0.18)}
+  .stp .snm{font-size:13px;font-weight:600;margin-top:10px}.stp.cur .snm{color:var(--purple)}.stp .rw{font-size:11px;color:var(--muted-2);margin-top:3px;line-height:1.35}
+  .tiernote{margin-top:20px;font-size:13px;color:var(--muted);background:rgba(183,156,255,0.07);border:1px solid rgba(183,156,255,0.2);border-radius:12px;padding:12px 15px;line-height:1.5}.tiernote b{color:#e4dbff}
+  .conf{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+  .conf .c{border:1px solid var(--border);background:var(--panel);border-radius:16px;padding:16px 18px}
+  .conf .c .lab{font-size:12px;color:var(--muted)}.conf .c .n{font-size:24px;font-weight:700;margin-top:8px}.conf .c .n .up{color:var(--green);font-size:13px;font-weight:600}.conf .c .hint{font-size:12px;color:var(--muted-2);margin-top:4px}
+  .quests{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}
+  .q{border:1px solid var(--border);background:var(--panel);border-radius:16px;padding:17px 18px;display:flex;flex-direction:column;gap:12px;position:relative}
+  .q.done{opacity:.6}.q.feature{border-color:rgba(183,156,255,0.35);background:linear-gradient(160deg,rgba(183,156,255,0.08),rgba(255,255,255,0.012))}
+  .q .featTag{position:absolute;top:14px;right:16px;font-size:10px;letter-spacing:.05em;font-weight:700;color:#160a2e;background:var(--purple);padding:2px 7px;border-radius:6px}
+  .q .qtop{display:flex;align-items:flex-start;gap:13px}
+  .q .ic{width:42px;height:42px;flex:0 0 42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;background:var(--panel-2)}
+  .q .qcat{font-size:10px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;color:var(--muted-2)}
+  .q .qtitle{font-size:16px;font-weight:600;margin-top:3px;line-height:1.3}
+  .q .qmeta{display:flex;gap:12px;font-size:12px;color:var(--muted-2);margin-top:5px}.q .qmeta .gain{color:var(--purple);font-weight:600}
+  .q .reward{display:flex;gap:9px;font-size:12px;line-height:1.45;color:#cbd6c8;background:rgba(67,217,154,0.06);border:1px solid rgba(67,217,154,0.16);border-radius:10px;padding:10px 12px}.q .reward .rx{color:var(--green)}.q .reward b{color:#eafff2}
+  .q .cta{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .q .qbtn{background:var(--blue-solid);color:#0a1024;border:none;font-weight:600;font-size:14px;padding:10px 16px;border-radius:11px;cursor:pointer}
+  .q .prog{flex:1;height:7px;border-radius:5px;background:rgba(255,255,255,0.08);overflow:hidden}.q .prog i{display:block;height:100%;background:var(--purple)}
+  .q .progtxt{font-size:12px;color:var(--muted);font-weight:600;white-space:nowrap}.q .donechip{color:var(--green);font-size:13px;font-weight:600}
+  .guard{margin-top:24px;font-size:12px;color:var(--muted-2);text-align:center;line-height:1.5}
+  .gfoot{margin-top:44px;padding-top:16px;border-top:1px solid var(--border);font-size:12px;color:var(--muted-2);text-align:center;line-height:1.5;max-width:640px;margin-left:auto;margin-right:auto}
+  .planToday{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);border:1px solid var(--border);background:var(--panel);padding:9px 15px;border-radius:12px;align-self:center}
+  .planToday b{color:var(--txt);font-size:15px}
+  .planfocus{margin-top:20px;border:1px solid rgba(126,162,255,0.3);background:linear-gradient(120deg,rgba(126,162,255,0.08),rgba(255,255,255,0.01));border-radius:16px;padding:16px 18px;display:flex;gap:14px;align-items:flex-start}
+  .planfocus .fic{width:34px;height:34px;flex:0 0 34px;border-radius:10px;background:rgba(126,162,255,0.16);color:var(--blue);display:flex;align-items:center;justify-content:center}
+  .planfocus .ft{font-size:14px;color:#e7ecf3;line-height:1.5}.planfocus .ft b{color:#fff}
+  .pcard{display:flex;align-items:center;gap:14px;border:1px solid var(--border);background:var(--panel);border-radius:15px;padding:14px 16px;margin-bottom:10px}
+  .pcard .pchk{width:26px;height:26px;flex:0 0 26px;border-radius:50%;border:2px solid var(--border-strong);display:flex;align-items:center;justify-content:center;color:transparent;cursor:pointer;font-size:14px;transition:.15s}
+  .pcard.done .pchk{background:var(--green);border-color:var(--green);color:#062015}
+  .pcard .picon{width:36px;height:36px;flex:0 0 36px;border-radius:10px;background:var(--panel-2);display:flex;align-items:center;justify-content:center;color:var(--muted)}
+  .pcard .pmid{flex:1;min-width:0}
+  .pcard .pn{font-size:15px;font-weight:600}.pcard .pn small{color:var(--muted-2);font-weight:400;font-size:12px;margin-left:6px}
+  .pcard .ptargets{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
+  .pcard .tchip{font-size:11px;color:#9fb4e8;border:1px solid rgba(126,162,255,0.3);padding:2px 9px;border-radius:20px;cursor:pointer}
+  .pcard .pright{text-align:right;flex:0 0 140px}
+  .pcard .padh{height:6px;border-radius:4px;background:rgba(255,255,255,0.08);overflow:hidden;margin-top:7px}.pcard .padh i{display:block;height:100%;border-radius:4px}
+  .pcard .pstate{font-size:11px;font-weight:700;letter-spacing:.04em}
+  .planfoot{margin-top:16px;font-size:12px;color:var(--muted-2)}.planfoot a{color:var(--blue);cursor:pointer}
+  .prog-top{display:flex;align-items:center;gap:26px;flex-wrap:wrap}
+  .prog-top .big{font-size:40px;font-weight:700;letter-spacing:-0.02em}.prog-top .lab{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700}
+  .prog-top .d{font-size:13px;color:var(--green);font-weight:600;margin-top:4px}
+  .changed{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .chgcol{border:1px solid var(--border);background:var(--panel);border-radius:16px;padding:16px 18px}
+  .chgcol h4{font-size:13px;font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+  .chgrow{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.045);font-size:14px}.chgrow:last-child{border:none}
+  .chgrow .cv{font-weight:600}
+  .goal{display:flex;align-items:center;gap:14px;border:1px solid var(--border);background:var(--panel);border-radius:14px;padding:13px 16px;margin-bottom:10px}
+  .goal .gn{flex:0 0 190px;font-size:14px;font-weight:600}.goal .gn small{display:block;color:var(--muted-2);font-weight:400;font-size:12px}
+  .goal .gbar{flex:1;height:8px;border-radius:5px;background:rgba(255,255,255,0.08);overflow:hidden}.goal .gbar i{display:block;height:100%;border-radius:5px;background:linear-gradient(90deg,#2f9e77,var(--green))}
+  .goal .gpct{flex:0 0 90px;text-align:right;font-size:12px;color:var(--muted)}
+  .timeline{border-left:2px solid var(--border);margin-left:8px;padding-left:22px}
+  .tli{position:relative;padding-bottom:18px}
+  .tli::before{content:"";position:absolute;left:-29px;top:2px;width:12px;height:12px;border-radius:50%;background:var(--green);border:3px solid var(--bg)}
+  .tli.future::before{background:var(--muted-2)}
+  .tli .td{font-size:12px;color:var(--muted-2)}.tli .tt{font-size:14px;font-weight:600;margin-top:2px}.tli .tx{font-size:12px;color:var(--muted);margin-top:2px}
+  .teamcards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:8px}
+  .tcard{border:1px solid var(--border);background:var(--panel);border-radius:16px;padding:16px}
+  .tcard .av{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;color:#0a1024;font-size:16px}
+  .tcard .tn{font-size:15px;font-weight:600;margin-top:10px}.tcard .tr{font-size:12px;color:var(--muted)}.tcard .ts{font-size:12px;color:var(--green);margin-top:8px}
+  .thread{border:1px solid var(--border);background:var(--panel);border-radius:16px;padding:16px}
+  .msg{display:flex;gap:11px;margin-bottom:16px;max-width:82%}
+  .msg .mav{width:30px;height:30px;flex:0 0 30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;color:#0a1024;font-size:12px}
+  .msg .mb{background:var(--panel-2);border-radius:12px;padding:10px 13px;font-size:13px;line-height:1.5}
+  .msg .who{font-size:11px;color:var(--muted-2);margin-bottom:3px}
+  .msg.me{margin-left:auto;flex-direction:row-reverse}.msg.me .mb{background:rgba(126,162,255,0.14)}
+  .composer{display:flex;gap:10px;margin-top:14px}.composer input{flex:1;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--txt);font-family:inherit;outline:none}
+  @media(max-width:820px){.changed{grid-template-columns:1fr}.teamcards{grid-template-columns:1fr}.goal .gn{flex-basis:130px}.pcard{flex-wrap:wrap}.pcard .pright{flex-basis:100%;text-align:left}}
+
+  /* placeholder */
+  .placeholder{margin-top:40px;border:1px dashed var(--border-strong);border-radius:20px;padding:60px 30px;text-align:center;color:var(--muted)}
+  .placeholder .pic{font-size:34px}.placeholder h3{font-size:19px;color:var(--txt);margin:14px 0 8px;font-weight:600}.placeholder p{max-width:420px;margin:0 auto;font-size:14px;line-height:1.6}
+
+  /* generic modal */
+  .overlay{position:fixed;inset:0;background:rgba(4,6,10,0.7);backdrop-filter:blur(3px);z-index:50;display:none;align-items:center;justify-content:center;padding:20px}
+  .overlay.show{display:flex}
+  .modal{width:100%;max-width:460px;background:#0e131c;border:1px solid var(--border-strong);border-radius:20px;padding:24px;max-height:90vh;overflow:auto}
+  .modal h2{font-size:19px;font-weight:600}.modal .msub{font-size:13px;color:var(--muted);margin:3px 0 18px}
+  .modrow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .field{margin-bottom:13px}.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
+  .field .iw{display:flex;align-items:center;gap:8px;border:1px solid var(--border);background:var(--panel);border-radius:11px;padding:0 12px}
+  .field input{flex:1;background:transparent;border:none;outline:none;color:var(--txt);font-size:15px;padding:12px 0;font-family:inherit}
+  .field .unit{font-size:12px;color:var(--muted-2)}
+  .modact{display:flex;gap:10px;margin-top:18px}.modact .save{flex:1;background:var(--blue-solid);color:#0a1024;border:none;font-weight:600;font-size:14px;padding:12px;border-radius:12px;cursor:pointer}.modact .cancel{background:transparent;color:var(--muted);border:1px solid var(--border);padding:12px 18px;border-radius:12px;cursor:pointer;font-size:14px}
+  .toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--green);color:#062015;font-weight:600;font-size:14px;padding:12px 20px;border-radius:12px;opacity:0;transition:.3s;z-index:70;pointer-events:none}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  /* check-in phone overlay */
+  #ciOverlay{position:fixed;inset:0;background:rgba(4,6,10,0.82);backdrop-filter:blur(6px);z-index:60;display:none;align-items:center;justify-content:center;padding:16px}
+  #ciOverlay.show{display:flex}
+  .phone{width:390px;max-width:100%;height:770px;max-height:92vh;background:#0a0e15;border:9px solid #05070b;border-radius:44px;position:relative;overflow:hidden;box-shadow:0 40px 90px rgba(0,0,0,.6);display:flex;flex-direction:column}
+  .phone .closeX{position:absolute;top:14px;right:16px;z-index:30;background:rgba(255,255,255,0.08);border:none;color:#cfd6e4;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:15px}
+  .ciback{position:absolute;top:12px;left:14px;z-index:30;background:rgba(255,255,255,0.08);border:none;color:#cfd6e4;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:18px;line-height:1}
+  .daychip{display:inline-flex;align-items:center;gap:7px;font-size:12px;color:var(--muted);border:1px solid var(--border);padding:6px 12px;border-radius:20px}.daychip svg{opacity:.85}
+  .cistat{height:42px;flex:0 0 42px;display:flex;align-items:center;justify-content:space-between;padding:0 26px;font-size:12px;color:#cfd6e4;font-weight:600}
+  .ciscreen{flex:1;position:relative;overflow:hidden}
+  .cicard{position:absolute;inset:0;display:flex;flex-direction:column;padding:18px 22px 22px;overflow-y:auto;animation:cislide .32s cubic-bezier(.2,.7,.2,1)}
+  @keyframes cislide{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:none}}
+  .cidots{display:flex;gap:5px;justify-content:center;margin-bottom:8px}.cidots i{width:15px;height:3px;border-radius:2px;background:rgba(255,255,255,0.12)}.cidots i.on{background:var(--green)}
+  .cibody{flex:1;display:flex;flex-direction:column}.cispace{flex:1}
+  .kicker{font-size:11px;letter-spacing:.13em;text-transform:uppercase;font-weight:700;color:var(--muted)}
+  .ch{font-size:25px;font-weight:600;letter-spacing:-0.02em;line-height:1.15;margin-top:11px}
+  .csub{color:var(--muted);font-size:14px;line-height:1.55;margin-top:11px}
+  .cibtn{width:100%;background:var(--blue-solid);color:#0a1024;border:none;font-weight:600;font-size:16px;padding:15px;border-radius:15px;cursor:pointer}
+  .cibtn.ghost{background:transparent;color:var(--muted);border:1px solid var(--border);margin-top:10px}
+  .cifl{font-size:50px;text-align:center;margin:12px 0 4px}
+  .cistreak{text-align:center}.cistreak .n{font-size:56px;font-weight:700;line-height:1}.cistreak .l{color:var(--muted);font-size:14px;margin-top:2px}
+  .synced{background:rgba(67,217,154,0.06);border:1px solid rgba(67,217,154,0.2);border-radius:16px;margin-top:18px}
+  .synced .row{display:flex;align-items:center;gap:13px;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.05)}.synced .row:last-child{border:none}
+  .synced .ic{font-size:18px;width:22px;text-align:center}.synced .nm{font-size:14px;font-weight:500}.synced .vv{margin-left:auto;font-size:14px;font-weight:600}.synced .ck{color:var(--green)}
+  .autotag{color:var(--green);font-size:12px;font-weight:600;text-align:center;margin-top:14px}
+  .adh{display:flex;flex-direction:column;gap:10px;margin-top:16px}
+  .item{display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:12px 14px;cursor:pointer;user-select:none}
+  .item .ic{font-size:19px;width:22px;text-align:center}.item .tx{font-size:14px;font-weight:500}.item .tx small{display:block;color:var(--muted-2);font-size:11px;font-weight:400}
+  .item .chk{margin-left:auto;width:25px;height:25px;border-radius:50%;border:2px solid var(--border-strong);display:flex;align-items:center;justify-content:center;color:transparent;font-size:13px}
+  .item.done{border-color:rgba(67,217,154,0.4);background:rgba(67,217,154,0.07)}.item.done .chk{background:var(--green);border-color:var(--green);color:#062015}
+  .seg{display:flex;gap:6px;margin-left:auto}.seg button{background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--muted);font-size:12px;font-weight:600;padding:6px 10px;border-radius:9px;cursor:pointer}.seg button.on{background:var(--green);color:#062015;border-color:var(--green)}
+  .markall{align-self:flex-start;background:none;border:none;color:var(--blue);font-size:13px;font-weight:600;cursor:pointer;margin-top:12px}
+  .feelval{text-align:center;font-size:50px;font-weight:700;margin:22px 0 2px}.feelword{text-align:center;color:var(--green);font-size:14px;font-weight:600;margin-bottom:20px}
+  input[type=range]{-webkit-appearance:none;width:100%;height:8px;border-radius:6px;background:linear-gradient(90deg,var(--red),var(--amber),var(--green));outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;border-radius:50%;background:#fff;cursor:pointer;border:3px solid #0a0e15}
+  .ends{display:flex;justify-content:space-between;color:var(--muted-2);font-size:12px;margin-top:9px}
+  .moods{display:flex;gap:8px;margin-top:22px}.moods button{flex:1;background:var(--panel);border:1px solid var(--border);border-radius:13px;padding:13px 4px;font-size:21px;cursor:pointer}.moods button.on{border-color:var(--blue);background:rgba(126,162,255,0.12)}
+  .cnote{margin-top:16px;background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:14px}.cnote textarea{width:100%;background:transparent;border:none;outline:none;color:var(--txt);font-size:15px;font-family:inherit;resize:none;min-height:88px;line-height:1.5}
+  .cteam{display:flex;align-items:center;gap:8px;margin-top:12px;color:var(--muted);font-size:12px}.cteam .avs{display:flex}.cteam .avs span{width:23px;height:23px;border-radius:50%;border:2px solid #0a0e15;margin-left:-7px;font-size:10px;font-weight:600;display:flex;align-items:center;justify-content:center;color:#0a1024}.cteam .avs span:first-child{margin-left:0}
+  .doneRing{width:84px;height:84px;border-radius:50%;background:rgba(67,217,154,0.14);display:flex;align-items:center;justify-content:center;font-size:38px;color:var(--green);margin:8px auto 0}
+  .payh{text-align:center;font-size:23px;font-weight:600;margin-top:14px}.pays{text-align:center;color:var(--muted);font-size:14px;margin-top:8px}
+  .statgrid{display:flex;gap:12px;margin-top:20px}.statc{flex:1;background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:15px;text-align:center}.statc .n{font-size:28px;font-weight:700}.statc .n .up{color:var(--green);font-size:15px}.statc .l{font-size:12px;color:var(--muted);margin-top:4px}
+  .insight{margin-top:16px;display:flex;gap:11px;background:rgba(67,217,154,0.06);border:1px solid rgba(67,217,154,0.2);border-radius:14px;padding:13px 15px}.insight .ic{color:var(--green)}.insight .tx{font-size:13px;line-height:1.5;color:#cbd6c8}.insight .tx b{color:#eafff2}
+  .coachnote{margin-top:12px;display:flex;gap:11px;background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:13px 15px}.coachnote .av{width:30px;height:30px;border-radius:50%;background:linear-gradient(140deg,#3a6df0,#7ea2ff);flex:0 0 30px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#0a1024}.coachnote .tx{font-size:13px;line-height:1.5;color:var(--muted)}.coachnote .tx b{color:var(--txt)}
+
+  .mobar{display:none}
+  .scrim{display:none}
+  .nav a:focus-visible,.foot a:focus-visible,.btn:focus-visible,.tile:focus-visible,.chip:focus-visible,.qbtn:focus-visible,.checkinBtn:focus-visible,.book:focus-visible,.cibtn:focus-visible,.save:focus-visible,.cancel:focus-visible,tbody tr.click:focus-visible,.closeX:focus-visible{outline:2px solid var(--blue-solid);outline-offset:2px;border-radius:8px}
+  @media(max-width:960px){
+    .sidebar{position:fixed;left:0;top:0;transform:translateX(-100%);transition:transform .25s ease;display:flex;z-index:60;box-shadow:0 0 50px rgba(0,0,0,.65)}
+    .sidebar.open{transform:none}
+    .scrim{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:55}
+    .scrim.show{display:block}
+    .mobar{display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:40;padding:11px 14px;margin:-34px -18px 8px;background:rgba(8,11,17,.92);backdrop-filter:blur(6px);border-bottom:1px solid var(--border)}
+    .mobar button{background:transparent;border:1px solid var(--border);color:var(--txt);width:38px;height:38px;border-radius:10px;font-size:17px;cursor:pointer}
+    .mobar .b{display:flex;align-items:center;gap:9px;font-weight:600;font-size:15px}
+    .mobar .b i{width:18px;height:18px;border-radius:50%;border:2px solid #cfd6e4;border-top-color:transparent;display:inline-block;transform:rotate(20deg)}
+    .main{padding:18px 18px 80px}
+    .hero,.hero2{grid-template-columns:1fr}.conf,.quests{grid-template-columns:1fr}.grid4{grid-template-columns:repeat(2,1fr)}td.hidecol,th.hidecol{display:none}
+    h1{font-size:24px}
+    .tablewrap{overflow-x:auto}
+    td,thead th{padding:12px 12px}
+    .cc-val .big{font-size:34px}
+  }
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="brand"><span class="logo"></span> Orba Health</div>
+  <nav class="nav">
+    <a data-v="hop" onclick="showView('hop')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg> Health Optimization Plan</a>
+    <a data-v="dashboard" onclick="showView('dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg> Today</a>
+    <a data-v="plan" onclick="showView('plan')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg> My Plan <span class="tag new">NEW</span></a>
+    <a data-v="progress" onclick="showView('progress')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V5M4 19h16"/><path d="M7 15l4-5 3 3 5-7"/></svg> Progress <span class="tag new">NEW</span></a>
+    <a data-v="blood" onclick="showView('blood')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2s6 7 6 12a6 6 0 0 1-12 0c0-5 6-12 6-12z"/></svg> Blood Biomarkers</a>
+    <a data-v="physical" onclick="showView('physical')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.4 14.5 16 10 4 22"/><circle cx="6" cy="6" r="2"/><path d="M14 6l3 3 4-4"/></svg> Physical Biomarkers <span class="tag new">NEW</span></a>
+    <a data-v="body" onclick="showView('body')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-4.35-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.65-7 10-7 10z"/></svg> Body <span class="tag soon">PHASE 2</span></a>
+    <a data-v="team" onclick="showView('team')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3"/><path d="M3.5 20a5.5 6 0 0 1 11 0"/><path d="M16 5.2a3 3 0 0 1 0 5.6M18.5 20a5.5 6 0 0 0-3-5.3"/></svg> Care Team <span class="tag new">NEW</span></a>
+    <a data-v="ask" onclick="showView('ask')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Ask Orba</a>
+    <a data-v="labs" onclick="showView('labs')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12M8 7l4-4 4 4M4 21h16"/></svg> Lab Reports</a>
+    <a data-v="levelup" onclick="showView('levelup')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l2.9 6 6.6.6-5 4.3 1.5 6.5L12 16.9 5.9 20.4 7.4 13l-5-4.3L9 8z"/></svg> Level Up <span class="tag pur">NEW</span></a>
+  </nav>
+  <button class="checkinBtn" onclick="ciOpen()">＋ Daily check-in</button>
+  <div class="spacer"></div>
+  <div class="draw"><svg width="16" height="16" viewBox="0 0 24 24" fill="var(--red)"><path d="M12 2s6 7 6 12a6 6 0 0 1-12 0c0-5 6-12 6-12z"/></svg><div><div class="t1">Blood Draw</div><div class="t2">Overdue by 5 days</div></div><span class="book">Book</span></div>
+  <div class="foot">
+    <a data-v="intake" onclick="showView('intake')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h5"/></svg> Intake Forms</a>
+    <a data-v="settings" onclick="showView('settings')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8 2 2 0 1 1-2.8 2.8 1.6 1.6 0 0 0-2.7 1.1 2 2 0 0 1-4 0 1.6 1.6 0 0 0-2.6-1.1 2 2 0 1 1-2.8-2.8A1.6 1.6 0 0 0 3 13.6a2 2 0 0 1 0-4 1.6 1.6 0 0 0 1.5-2.6 2 2 0 1 1 2.8-2.8A1.6 1.6 0 0 0 10 3.6a2 2 0 0 1 4 0 1.6 1.6 0 0 0 2.6 1.5 2 2 0 1 1 2.8 2.8A1.6 1.6 0 0 0 20.4 10a2 2 0 0 1 0 4z"/></svg> Settings</a>
+  </div>
+  <div class="user"><div class="av">D</div><div><div class="nm">Dan</div><div class="sub">Account</div></div></div>
+</aside>
+
+<div class="scrim" id="scrim" onclick="toggleNav()"></div>
+<main class="main">
+  <div class="mobar"><button aria-label="Open menu" onclick="toggleNav()">☰</button><span class="b"><i></i> Orba Health</span></div>
+  <!-- DASHBOARD -->
+  <section class="view" id="v_dashboard">
+    <div class="head"><div><h1>Today</h1><div class="subline">Good morning, Dan. Here's what matters right now.</div></div><button class="btn" onclick="ciOpen()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg> Daily check-in</button></div>
+    <div class="attn">
+      <div class="attn-ic">!</div>
+      <div class="attn-body">
+        <div class="attn-t"><b>Your top priority this cycle: lipids.</b> LDL 193 · ApoB 114 mg/dL — above optimal and rising together. This is the lever that moves your Bio Age next. <a onclick="showView('blood')">Review with your team →</a></div>
+        <div class="attn-sub">Blood draw overdue by 5 days — your live scores are running on 5-day-old assumptions.</div>
+      </div>
+      <button class="btn" style="align-self:center">Book draw</button>
+    </div>
+    <div class="hero2">
+      <div class="ringcard"><div class="glow"></div><div class="ring" id="dashBio" style="width:130px;height:130px;flex:0 0 130px"></div>
+        <div class="rc"><div class="label">Biomarker Age</div><h3>≈ 1 year younger</h3><div class="delta green">est. 49 vs chronological 50 · ±1.4 yr</div><div class="meta">Biomarker-based estimate · 88/112 markers optimal<br>Reviewed by Dr. Zeth · 6 May</div></div></div>
+      <div class="ringcard live"><div class="glow"></div><div class="ring" id="dashMom" style="width:130px;height:130px;flex:0 0 130px"></div>
+        <div class="rc"><div class="label" style="color:#7fe6b8">Momentum · today</div><h3>You're trending up</h3><div class="delta green">▲ 6 this week · 82 / 100</div><div class="meta">Live daily score from your physical markers &amp; wearables.<br>Set up in <b style="color:#cdd6e6;cursor:pointer" onclick="showView('body')">Body</b>.</div></div></div>
+    </div>
+    <div class="sectitle" style="margin-top:26px">Body System Scores <span style="text-transform:none;letter-spacing:0;font-weight:400;color:var(--muted-2)">· weighted by status — optimal counts full, sub-optimal counts half</span></div>
+    <div class="bodymapwrap" id="bodymapwrap"></div>
+  </section>
+
+  <!-- MY PLAN -->
+  <section class="view" id="v_plan">
+    <div class="head"><div><h1>My Plan</h1><div class="subline">What you committed to with your team — and how it's going this cycle.</div></div><div class="planToday" id="planToday"></div></div>
+    <div class="planfocus" id="planFocus"></div>
+    <div class="sectitle" style="margin-top:24px">Your committed actions</div>
+    <div id="planList"></div>
+    <div class="planfoot">Committed 16 Jul with Dr. Zeth · next team review after your blood draw. <a onclick="showView('hop')">See the full Health Review →</a></div>
+  </section>
+
+  <!-- PROGRESS -->
+  <section class="view" id="v_progress">
+    <div class="head"><div><h1>Progress</h1><div class="subline">Your journey, draw over draw — and what your habits are moving.</div></div></div>
+    <div class="card" id="progHero" style="margin-top:22px"></div>
+    <div class="sectitle" style="margin-top:26px">What changed since your last draw</div>
+    <div class="changed" id="progChanged"></div>
+    <div class="sectitle" style="margin-top:28px">Goals you're working toward</div>
+    <div id="progGoals"></div>
+    <div class="sectitle" style="margin-top:28px">Milestones</div>
+    <div class="timeline" id="progTimeline"></div>
+  </section>
+
+  <!-- CARE TEAM -->
+  <section class="view" id="v_team">
+    <div class="head"><div><h1>Your Care Team</h1><div class="subline">Three humans who see your data and your daily check-ins — not a chatbot.</div></div></div>
+    <div class="teamcards" id="teamCards"></div>
+    <div class="sectitle" style="margin-top:24px">Messages</div>
+    <div class="thread" id="teamThread"></div>
+    <div class="composer"><input placeholder="Message your team…" aria-label="Message your team"><button class="btn">Send</button></div>
+    <div class="planfoot">Typical reply within a day. For anything urgent, your team will always point you to in-person care.</div>
+  </section>
+
+  <!-- BLOOD BIOMARKERS -->
+  <section class="view" id="v_blood">
+    <div class="head"><div><h1>Blood Biomarkers</h1><div class="subline">112 markers across your 2 reports · drawn 6 May, nHealth Laboratory · reviewed by Dr. Zeth. Tap any biomarker to explore it.</div></div>
+      <button class="btn soft" onclick="showView('ask')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Ask Orba about your results</button></div>
+    <div class="chips"><button class="chip on">All (112)</button><button class="chip">Heart (10)</button><button class="chip">Metabolism (14)</button><button class="chip">Hormones (14)</button><button class="chip">Liver (13)</button><button class="chip">Kidneys (20)</button><button class="chip">Blood & Immune (22)</button></div>
+    <div class="tablewrap"><table><thead><tr><th>Biomarker</th><th class="hidecol">Body system</th><th>Value</th><th class="hidecol">Optimal range</th><th>Status</th><th class="r">Trend</th></tr></thead><tbody id="bloodBody"></tbody></table></div>
+  </section>
+
+  <!-- PHYSICAL BIOMARKERS -->
+  <section class="view" id="v_physical">
+    <div class="head"><div><h1>Physical Biomarkers <span class="concept">PHASE 1</span></h1><div class="subline">The evidence-based markers you measure yourself — remeasured every 3–4 months alongside your blood draw.</div></div>
+      <button class="btn" onclick="openLog()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg> Log measurements</button></div>
+    <div class="tablewrap"><table><thead><tr><th>Marker</th><th class="hidecol">Category</th><th>Value</th><th class="hidecol">Optimal / target</th><th>Status</th><th class="r">12-week trend</th></tr></thead><tbody id="pmBody"></tbody></table></div>
+    <div class="chartcard"><div class="cc-glow"></div>
+      <div class="cc-head"><div><div class="cc-title" id="pmTitle"></div><div class="cc-val"><span class="big" id="pmBig"></span><span class="u" id="pmUnit"></span><span class="status" id="pmStatus"></span></div></div>
+        <div class="cc-delta"><div class="d" id="pmDelta"></div><div class="lab">since 6 May · 12 weeks</div></div></div>
+      <div style="margin-top:18px"><svg id="pmChart" width="100%" viewBox="0 0 880 270" style="height:auto;display:block" role="img" aria-label="Marker trend chart"></svg></div>
+      <div class="toGoal"><div class="tg-top"><div class="l" id="pmTgLabel"></div><div class="pct" id="pmTgPct"></div></div>
+        <div class="track"><div class="fill" id="pmFill"></div><div class="now" id="pmNow"></div><div class="flag"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#43d99a" stroke-width="1.8"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4"/></svg></div></div>
+        <div class="tg-ends"><span>Start · <b id="pmStart"></b></span><span>Target · <b id="pmTgt"></b></span></div></div>
+    </div>
+  </section>
+
+  <!-- BODY (Phase 2) -->
+  <section class="view" id="v_body">
+    <div class="head"><div><h1>Body <span class="concept">PHASE 2 · with device integrations</span></h1><div class="subline">Your daily physical picture — auto-synced from wearables, powering a live Momentum score between draws.</div></div>
+      <button class="btn" onclick="ciOpen()">＋ Daily check-in</button></div>
+    <div class="hero2">
+      <div class="ringcard"><div class="glow"></div><div class="ring" id="bodyBio" style="width:120px;height:120px;flex:0 0 120px"></div><div class="rc"><div class="label">Bio Age</div><h3>1.0 yr younger</h3><div class="meta">Updated 6 May · from bloodwork<br>Refreshes every 3 months</div></div></div>
+      <div class="ringcard live"><div class="glow"></div><div class="ring" id="bodyMom" style="width:120px;height:120px;flex:0 0 120px"></div><div class="rc"><div class="label" style="color:#7fe6b8">Momentum · today</div><h3>You're trending up</h3><div class="delta green">▲ 6 this week</div><div class="meta">Live from daily markers & wearables.</div></div></div>
+    </div>
+    <div class="explain"><b>How it works:</b> Bio Age moves 4× a year; <b>Momentum</b> blends the markers below into one score that updates daily — so you feel your plan working long before the next draw.</div>
+    <div class="sectitle" style="margin-top:20px">Today's markers · tap to chart</div>
+    <div class="grid4" id="bodyTiles"></div>
+    <div class="chartcard"><div class="cc-glow"></div>
+      <div class="cc-head"><div><div class="cc-title" id="bTitle"></div><div class="cc-val"><span class="big" id="bBig"></span><span class="u" id="bUnit"></span><span class="status" id="bStatus"></span></div></div>
+        <div class="cc-delta"><div class="d" id="bDelta"></div><div class="lab">last 8 weeks</div></div></div>
+      <div style="margin-top:18px"><svg id="bChart" width="100%" viewBox="0 0 880 250" style="height:auto;display:block" role="img" aria-label="Marker trend chart"></svg></div>
+    </div>
+  </section>
+
+  <!-- LEVEL UP -->
+  <section class="view" id="v_levelup">
+    <h1>Level Up <span class="concept pur">CONCEPT</span></h1>
+    <div class="subline">Small tasks that make your Orba sharper over time. Every one you finish improves the accuracy of your scores and your team's picture of you — go at your own pace.</div>
+    <div class="hero">
+      <div class="card strengthcard"><div class="ring" id="strengthRing" style="width:150px;height:150px;margin:6px 0 8px"></div><div class="level">You're <span class="lv">Dialled-in</span></div><div class="next">11% to <b style="color:#d8ccff">Optimised</b> — 3 quests away</div></div>
+      <div class="card"><div class="tt-title">Your profile journey</div>
+        <div class="steps">
+          <div class="stp done"><div class="bar"></div><div class="node">✓</div><div class="snm">Foundation</div><div class="rw">Bio Age + plan</div></div>
+          <div class="stp done cur"><div class="bar fill"></div><div class="node">★</div><div class="snm">Dialled-in</div><div class="rw">Personalised scores</div></div>
+          <div class="stp"><div class="bar"></div><div class="node">3</div><div class="snm">Optimised</div><div class="rw">Quarterly deep-dive</div></div>
+        </div>
+        <div class="tiernote">✦ Reaching <b>Optimised</b> unlocks your quarterly deep-dive report and priority team review — and tightens your Bio Age to within ±1 year.</div>
+      </div>
+    </div>
+    <div class="conf">
+      <div class="c"><div class="lab">Bio Age confidence</div><div class="n">±1.4 yr <span class="up">▲ sharper</span></div><div class="hint">was ±2.2 yr — improves as you complete quests</div></div>
+      <div class="c"><div class="lab">Systems personalised</div><div class="n">6 <span style="color:var(--muted-2);font-size:15px">/ 8</span></div><div class="hint">Hormones & Kidneys need 1 quest each</div></div>
+      <div class="c"><div class="lab">Insights unlocked</div><div class="n">23</div><div class="hint">+4 waiting behind your next 2 quests</div></div>
+    </div>
+    <div class="sectitle" style="margin-top:30px">Your quests</div>
+    <div class="quests" id="quests"></div>
+    <div class="guard">Orba never penalises a missed day or an unfinished quest. This is here to make your results better — not to pressure you.</div>
+  </section>
+
+  <!-- placeholders -->
+  <section class="view" id="v_hop"><div class="placeholder"><div class="pic">📖</div><h3>Health Optimization Plan</h3><p>Your bloodwork, read like a story by your doctor, coach & nutritionist — with Add / Skip actions you commit to. (Existing screen — not part of this concept set.)</p></div></section>
+  <section class="view" id="v_ask"><div class="placeholder"><div class="pic">💬</div><h3>Ask Orba</h3><p>Context-aware AI chat that knows your biomarkers, your plan and your notes. (Existing screen.)</p></div></section>
+  <section class="view" id="v_labs"><div class="placeholder"><div class="pic">📄</div><h3>Lab Reports</h3><p>Upload and share lab PDFs with your care team. (Existing screen.)</p></div></section>
+  <section class="view" id="v_intake"><div class="placeholder"><div class="pic">📋</div><h3>Intake Forms</h3><p>Your Health Profile — blood test prep, nurse visit details, wellbeing snapshot. (Existing screen; a candidate for the Level Up quest system.)</p></div></section>
+  <section class="view" id="v_settings"><div class="placeholder"><div class="pic">⚙️</div><h3>Settings</h3><p>Account, profile & preferences. (Existing screen.)</p></div></section>
+  <div class="gfoot">Orba scores are estimates for optimisation, not diagnosis. Discuss any changes with your Orba clinician before acting. Not medical advice.</div>
+</main>
+
+<!-- LOG MEASUREMENTS MODAL -->
+<div class="overlay" id="logOverlay">
+  <div class="modal">
+    <h2>Log measurements</h2>
+    <div class="msub">Your 3–4 month physical panel. Takes about 2 minutes.</div>
+    <div class="modrow">
+      <div class="field"><label>Weight</label><div class="iw"><input type="number" placeholder="78.4"><span class="unit">kg</span></div></div>
+      <div class="field"><label>Waist (abdominal)</label><div class="iw"><input type="number" placeholder="88"><span class="unit">cm</span></div></div>
+    </div>
+    <div class="modrow">
+      <div class="field"><label>Grip strength (avg)</label><div class="iw"><input type="number" placeholder="48"><span class="unit">kg</span></div></div>
+      <div class="field"><label>Neck (optional)</label><div class="iw"><input type="number" placeholder="38"><span class="unit">cm</span></div></div>
+    </div>
+    <div class="modrow">
+      <div class="field"><label>Resting heart rate</label><div class="iw"><input type="number" placeholder="58"><span class="unit">bpm</span></div></div>
+      <div class="field"><label>VO₂max (field test)</label><div class="iw"><input type="number" placeholder="44"><span class="unit"></span></div></div>
+    </div>
+    <div class="msub" style="margin:2px 0 0">Height (180 cm) is on file — we'll compute your Waist-to-Height Ratio automatically.</div>
+    <div class="modact"><button class="cancel" onclick="closeLog()">Cancel</button><button class="save" onclick="saveLog()">Save measurements</button></div>
+  </div>
+</div>
+<div class="toast" id="toast">✓ Saved</div>
+
+<div class="overlay" id="bloodOverlay"><div class="modal" id="bloodModal"></div></div>
+
+<!-- CHECK-IN OVERLAY -->
+<div id="ciOverlay">
+  <div class="phone">
+    <button class="closeX" onclick="ciClose()">✕</button>
+    <div class="cistat"><span>9:41</span><span style="margin-right:34px">Orba ●</span></div>
+    <div class="ciscreen" id="ciScreen"></div>
+  </div>
+</div>
+
+<script>
+/* ---------------- shared helpers ---------------- */
+function ringSVG(el,pct,numHTML,cap,color,size,sw){
+  sw=sw||9;const r=size*0.42,c=2*Math.PI*r,off=c*(1-pct/100),cx=size/2;
+  el.innerHTML=`<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" aria-hidden="true">
+    <circle cx="${cx}" cy="${cx}" r="${r}" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="${sw}"/>
+    <circle cx="${cx}" cy="${cx}" r="${r}" fill="none" stroke="${color}" stroke-width="${sw}" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c}" transform="rotate(-90 ${cx} ${cx})">
+      <animate attributeName="stroke-dashoffset" from="${c}" to="${off}" dur="1s" fill="freeze" calcMode="spline" keySplines="0.2 0.7 0.2 1"/></circle></svg>
+    <div class="v"><div class="num" style="font-size:${size*0.26}px">${numHTML}</div><div class="cap">${cap}</div></div>`;
+}
+function spark(d,good){
+  const col=good==='stable'?'#7a8296':(good===false?'#f56a63':'#43d99a');
+  const w=140,h=30,mn=Math.min(...d),mx=Math.max(...d),rng=(mx-mn)||1;
+  const pts=d.map((v,i)=>[(i/(d.length-1))*w,h-4-((v-mn)/rng)*(h-8)]);
+  const path=pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+  const l=pts[pts.length-1];
+  return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" aria-hidden="true"><path d="${path}" fill="none" stroke="${col}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity=".9"/><circle cx="${l[0].toFixed(1)}" cy="${l[1].toFixed(1)}" r="2.6" fill="${col}"/></svg>`;
+}
+const ICONS={
+ pill:'<rect x="3" y="8.5" width="18" height="7" rx="3.5"/><path d="M12 8.5v7"/>',
+ fish:'<path d="M3 12c4-5 12-5 16 0-4 5-12 5-16 0z"/><path d="M19 12l2.6-2v4z"/><circle cx="8" cy="11.3" r=".7" fill="currentColor" stroke="none"/>',
+ walk:'<circle cx="13" cy="4.6" r="1.6"/><path d="M12 8l-2.2 4 2.2 2 1 5M12 12l3 1.2M9.8 12l-2 3.4"/>',
+ sleep:'<path d="M21 12.8A8 8 0 1 1 11.2 3 6.3 6.3 0 0 0 21 12.8z"/>',
+ ring:'<circle cx="12" cy="12" r="7.6"/><circle cx="12" cy="12" r="3.2"/>',
+ dna:'<path d="M7 3c0 5 10 7 10 12M17 3c0 5-10 7-10 12M8.5 6h7M8.5 18h7M10 9h4M10 15h4"/>',
+ meal:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v9M9.2 7.5v3.5M14.8 7.5v3.5"/>',
+ doc:'<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/>',
+ brain:'<path d="M9.5 4.2A2.6 2.6 0 0 0 6.5 7 2.7 2.7 0 0 0 5 12a2.7 2.7 0 0 0 2 4.4A2.6 2.6 0 0 0 9.5 19c1 0 2-.6 2-1.6V5.6c0-.9-.9-1.5-2-1.4zM14.5 4.2A2.6 2.6 0 0 1 17.5 7 2.7 2.7 0 0 1 19 12a2.7 2.7 0 0 1-2 4.4A2.6 2.6 0 0 1 14.5 19c-1 0-2-.6-2-1.6"/>',
+ calendar:'<rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 9.5h17M8 3v4M16 3v4M8.5 14l2 2 4-4"/>',
+ heart:'<path d="M12 20s-7-4.6-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.4-7 10-7 10z"/>',
+ pulse:'<path d="M3 12h4l2-5 3 10 2-5h7"/>',
+ steps:'<path d="M9 21c-2 0-3.2-1.3-3.2-3.2 0-1.7 1-2.6 1-4.6 0-1.7.8-3.2 2.6-3.2s2.4 1.7 2.4 3.6-.6 7.4-2.8 7.4zM16.5 12.5c1.4 0 2.4-1 2.4-2.5 0-1.4.5-2.4.5-3.8 0-1.3-.7-2.6-2.2-2.6s-2 1.5-2 3 .5 5.9 1.3 5.9z"/>',
+ target:'<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r=".9" fill="currentColor" stroke="none"/>',
+ spark:'<path d="M12 3l1.9 5.4L19 10l-5.1 1.6L12 17l-1.9-5.4L5 10l5.1-1.6z"/>',
+ lab:'<path d="M9 3v6l-4.5 8A2 2 0 0 0 6.3 20h11.4a2 2 0 0 0 1.8-3L15 9V3M8 3h8M8.5 14h7"/>'
+};
+function ic(name,size){size=size||20;return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name]||''}</svg>`;}
+function drawChart(svgId,m,H){
+  const d=m.data,n=d.length,W=880,pL=52,pR=28,pT=26,pB=36;
+  const yMin=m.yMin,yMax=m.yMax,rng=yMax-yMin;
+  const x=i=>pL+(i/(n-1))*(W-pL-pR), y=v=>pT+(1-(v-yMin)/rng)*(H-pT-pB);
+  const pts=d.map((v,i)=>[x(i),y(v)]);
+  const line=pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+  const area=`M ${pts[0][0].toFixed(1)} ${(H-pB).toFixed(1)} `+pts.map(p=>'L'+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ')+` L ${pts[n-1][0].toFixed(1)} ${(H-pB).toFixed(1)} Z`;
+  let band='';
+  if(m.band){let a=y(Math.min(m.band.to,yMax)),b=y(Math.max(m.band.from,yMin));if(a>b){const t=a;a=b;b=t;}
+    band=`<rect x="${pL}" y="${a.toFixed(1)}" width="${(W-pL-pR).toFixed(1)}" height="${(b-a).toFixed(1)}" fill="rgba(126,162,255,0.08)"/><line x1="${pL}" y1="${a.toFixed(1)}" x2="${W-pR}" y2="${a.toFixed(1)}" stroke="rgba(126,162,255,0.25)"/><line x1="${pL}" y1="${b.toFixed(1)}" x2="${W-pR}" y2="${b.toFixed(1)}" stroke="rgba(126,162,255,0.25)"/><text x="${W-pR-6}" y="${(b-8).toFixed(1)}" text-anchor="end" fill="rgba(126,162,255,0.6)" font-size="10.5" font-weight="600" letter-spacing="1">OPTIMAL ZONE</text>`;}
+  let grid='';for(let g=0;g<=3;g++){const vv=yMin+(g/3)*rng,yy=y(vv);grid+=`<line x1="${pL}" y1="${yy.toFixed(1)}" x2="${W-pR}" y2="${yy.toFixed(1)}" stroke="rgba(255,255,255,0.045)"/><text x="${pL-10}" y="${(yy+3).toFixed(1)}" text-anchor="end" fill="#7a8296" font-size="10.5">${m.decimals!=null?vv.toFixed(m.decimals):Math.round(vv)}</text>`;}
+  let tline='';
+  if(m.targetLine!=null && m.targetLine>=yMin && m.targetLine<=yMax){const ty=y(m.targetLine);const dir=(m.band&&m.band.to>m.targetLine)?'≥':'≤';tline=`<line x1="${pL}" y1="${ty.toFixed(1)}" x2="${W-pR}" y2="${ty.toFixed(1)}" stroke="#43d99a" stroke-width="1.4" stroke-dasharray="5 5" opacity=".7"/><text x="${pL+6}" y="${(ty-7).toFixed(1)}" fill="#43d99a" font-size="11" font-weight="700">optimal ${dir} ${m.targetLabel||m.targetLine}</text>`;}
+  let annot='';
+  if(m.annot!=null){const ai=m.annot,ax=x(ai),ay=y(d[ai]);annot=`<line x1="${ax.toFixed(1)}" y1="${pT}" x2="${ax.toFixed(1)}" y2="${(H-pB).toFixed(1)}" stroke="#43d99a" stroke-width="1.1" stroke-dasharray="4 4" opacity=".6"/><text x="${(ax+8).toFixed(1)}" y="${(pT+14).toFixed(1)}" fill="#7fe6b8" font-size="11" font-weight="600">${m.annotLabel}</text>`;}
+  const wk=m.xlabels||['12w','10w','8w','6w','4w','3w','1w','now'];
+  let xlab='';d.forEach((v,i)=>{xlab+=`<text x="${x(i).toFixed(1)}" y="${H-12}" text-anchor="middle" fill="#7a8296" font-size="10.5">${wk[i]||''}</text>`;});
+  const s=pts[0],now=pts[n-1];
+  document.getElementById(svgId).setAttribute('viewBox',`0 0 ${W} ${H}`);
+  document.getElementById(svgId).innerHTML=`<defs><linearGradient id="ga_${svgId}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9db4d8" stop-opacity=".14"/><stop offset="1" stop-color="#9db4d8" stop-opacity="0"/></linearGradient></defs>
+    ${band}${grid}<path d="${area}" fill="url(#ga_${svgId})"/><path class="segline" d="${line}" fill="none" stroke="#43d99a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>${tline}${annot}
+    <circle cx="${s[0].toFixed(1)}" cy="${s[1].toFixed(1)}" r="5" fill="none" stroke="#8b94a6" stroke-width="2"/><text x="${s[0].toFixed(1)}" y="${(s[1]-12).toFixed(1)}" text-anchor="middle" fill="#8b94a6" font-size="11" font-weight="600">start ${m.start}</text>
+    <circle class="pulse" cx="${now[0].toFixed(1)}" cy="${now[1].toFixed(1)}" r="14" fill="#43d99a"/><circle cx="${now[0].toFixed(1)}" cy="${now[1].toFixed(1)}" r="6.5" fill="#43d99a"/><text x="${(now[0]-4).toFixed(1)}" y="${(now[1]-14).toFixed(1)}" text-anchor="end" fill="#eafff2" font-size="13" font-weight="700">${m.v}${m.u?(' '+m.u):''}</text>`;
+}
+
+/* ---------------- data ---------------- */
+const BLOOD=[
+  {n:"Apolipoprotein B",sys:"Heart Health",v:"114",u:"mg/dL",opt:"< 90",st:"Out of Range",c:"red",d:[104,106,108,110,112,114],good:false,dl:"▲ 10"},
+  {n:"LDL Cholesterol",sys:"Heart Health",v:"193",u:"mg/dL",opt:"< 100",st:"Out of Range",c:"red",d:[176,180,184,187,190,193],good:false,dl:"▲ 17"},
+  {n:"Total Cholesterol",sys:"Heart Health",v:"252",u:"mg/dL",opt:"< 200",st:"Out of Range",c:"red",d:[236,240,244,247,250,252],good:false,dl:"▲ 16"},
+  {n:"Triglycerides",sys:"Metabolism",v:"88",u:"mg/dL",opt:"< 90",st:"Optimal",c:"green",d:[102,99,96,93,90,88],good:true,dl:"▼ 14"},
+  {n:"Fasting Insulin",sys:"Metabolism",v:"3.8",u:"uIU/mL",opt:"2–6",st:"Optimal",c:"green",d:[4.6,4.4,4.2,4.0,3.9,3.8],good:true,dl:"▼ 0.8"},
+  {n:"HbA1c",sys:"Metabolism",v:"5.4",u:"%",opt:"< 5.7",st:"Optimal",c:"green",d:[5.6,5.6,5.5,5.5,5.4,5.4],good:true,dl:"▼ 0.2"},
+  {n:"AST",sys:"Liver",v:"23",u:"U/L",opt:"10–30",st:"Optimal",c:"green",d:[21,22,22,23,23,23],good:true,dl:"stable"},
+  {n:"Cortisol (AM)",sys:"Hormones",v:"6.2",u:"ug/dL",opt:"6–23",st:"Low-normal",c:"amber",d:[7.2,7.0,6.8,6.5,6.3,6.2],good:false,dl:"▼ low"},
+  {n:"Bioavailable Testosterone",sys:"Hormones",v:"319",u:"ng/dL",opt:"> 200",st:"Optimal",c:"green",d:[300,305,309,313,316,319],good:true,dl:"▲ 19"},
+  {n:"eGFR",sys:"Kidneys",v:"80",u:"mL/min/1.73m²",opt:"≥ 60",st:"Normal",c:"green",d:[82,82,81,81,80,80],good:true,dl:"stable"},
+  {n:"hs-CRP",sys:"Inflammation",v:"0.6",u:"mg/L",opt:"< 1.0",st:"Optimal",c:"green",d:[0.9,0.8,0.8,0.7,0.6,0.6],good:true,dl:"▼ 0.3"},
+  {n:"Vitamin D",sys:"Vitamins & Minerals",v:"28",u:"ng/mL",opt:"40–60",st:"Low",c:"amber",d:[24,25,26,26,27,28],good:true,dl:"▲ 4"}
+];
+const PM={
+  weight:{name:"Weight",extra:"BMI 24.1",cat:"Body composition",v:"78.4",u:"kg",target:"BMI 18.5–24.9",status:"OPTIMAL",cls:"green",data:[80.5,80.1,79.6,79.2,78.9,78.7,78.5,78.4],decimals:1,band:{from:56,to:81.3},targetLine:null,yMin:74,yMax:82,delta:"▼ 2.1 kg",start:"80.5",tgt:"75.0",pct:38,tgLabel:'Progress to your target of <b>75 kg</b>',tgpct:"38%"},
+  whtr:{name:"Waist-to-Height Ratio",extra:"waist 88 / height 180",cat:"Body composition",v:"0.49",u:"ratio",target:"&lt; 0.50",status:"OPTIMAL",cls:"green",badge:"KEY",data:[0.52,0.515,0.51,0.505,0.50,0.495,0.492,0.49],decimals:2,band:{from:0.30,to:0.50},targetLine:0.50,yMin:0.46,yMax:0.53,delta:"▼ 0.03",start:"0.52",tgt:"0.50",pct:100,tgLabel:'Progress to your target of <b>&lt; 0.50</b>',tgpct:"Target met ✓"},
+  waist:{name:"Waist (abdominal)",extra:"measured input",cat:"Body composition",v:"88",u:"cm",target:"&lt; 90 cm",status:"WATCH",cls:"amber",data:[91.4,91,90.5,90,89.4,88.8,88.3,88],decimals:0,band:{from:60,to:90},targetLine:90,yMin:85,yMax:92,delta:"▼ 3.4 cm",start:"91.4",tgt:"85",pct:53,tgLabel:'Progress to your target of <b>85 cm</b>',tgpct:"53%"},
+  grip:{name:"Grip Strength",extra:"avg of both hands",cat:"Strength · function",v:"48",u:"kg",target:"&gt; 40 kg",status:"OPTIMAL",cls:"green",badge:"LONGEVITY",data:[41,42,43,44,45,46,47,48],decimals:0,band:{from:40,to:60},targetLine:40,yMin:38,yMax:52,delta:"▲ 7 kg",start:"41",tgt:"50",pct:78,tgLabel:'Progress to your stretch goal of <b>50 kg</b>',tgpct:"78%"},
+  vo2:{name:"VO₂max",extra:"field test",cat:"Cardio-fitness",v:"44",u:"",target:"&gt; 42",status:"OPTIMAL",cls:"green",badge:"FIELD TEST",data:[40,40,41,41,42,43,43,44],decimals:0,band:{from:42,to:60},targetLine:42,yMin:38,yMax:48,delta:"▲ 4",start:"40",tgt:"46",pct:67,tgLabel:'Progress to your target of <b>46</b>',tgpct:"67%"},
+  rhr:{name:"Resting Heart Rate",extra:"60-sec manual pulse",cat:"Cardiovascular",v:"58",u:"bpm",target:"50–60 bpm",status:"OPTIMAL",cls:"green",data:[64,63,62,61,60,59,58,58],decimals:0,band:{from:48,to:60},targetLine:60,yMin:52,yMax:66,delta:"▼ 6 bpm",start:"64",tgt:"55",pct:66,tgLabel:'Progress to your target of <b>55 bpm</b>',tgpct:"66%"},
+  neck:{name:"Neck circumference",extra:"optional · OSA screen",cat:"Screening",v:"38",u:"cm",target:"&lt; 43 cm",status:"OPTIMAL",cls:"green",data:[38.4,38.3,38.2,38.2,38.1,38,38,38],decimals:1,band:{from:30,to:43},targetLine:43,yMin:36,yMax:44,delta:"▼ 0.4 cm",start:"38.4",tgt:"stable",pct:100,tgLabel:"Comfortably in range",tgpct:"Healthy ✓"}
+};
+const PMORDER=["weight","whtr","waist","grip","vo2","rhr","neck"];
+let pmCur="whtr";
+const BODY={
+  rhr:{name:"Resting HR",tn:"Resting HR",u:"bpm",v:"58",status:"OPTIMAL",cls:"green",src:"OURA",dev:true,data:[64,64,63,62,61,60,59,58],decimals:0,band:{from:48,to:60},targetLine:60,yMin:52,yMax:66,delta:"▼ 6 bpm",start:"64",tgt:"55",annot:3,annotLabel:"Started daily walk",tgttile:"Optimal 50–60",tdir:"▼ −6"},
+  grip:{name:"Grip Strength",tn:"Grip",u:"kg",v:"48",status:"OPTIMAL",cls:"green",src:"MANUAL",data:[41,42,43,44,45,46,47,48],decimals:0,band:{from:40,to:60},targetLine:40,yMin:38,yMax:52,delta:"▲ 7 kg",start:"41",tgt:"50",tgttile:"Optimal > 40",tdir:"▲ +7"},
+  hrv:{name:"HRV",tn:"HRV",u:"ms",v:"62",status:"WATCH",cls:"amber",src:"OURA",dev:true,data:[48,50,52,55,54,58,60,62],decimals:0,band:{from:70,to:100},targetLine:70,yMin:44,yMax:74,delta:"▲ 14 ms",start:"48",tgt:"70",tgttile:"Aim > 70",tdir:"▲ +14"},
+  weight:{name:"Weight",tn:"Weight",u:"kg",v:"78.4",status:"WATCH",cls:"amber",src:"SCALE",dev:true,data:[80.5,80.2,79.8,79.5,79.1,78.9,78.6,78.4],decimals:1,band:{from:56,to:75},targetLine:75,yMin:74,yMax:82,delta:"▼ 2.1 kg",start:"80.5",tgt:"75",tgttile:"Target 75",tdir:"▼ −2.1"},
+  sleep:{name:"Sleep",tn:"Sleep",u:"h",v:"7.2",status:"OPTIMAL",cls:"green",src:"OURA",dev:true,data:[6.4,6.5,6.7,6.9,6.8,7.0,7.1,7.2],decimals:1,band:{from:7,to:9},targetLine:7,yMin:6,yMax:9,delta:"▲ 0.8 h",start:"6.4",tgt:"7.5",tgttile:"Optimal 7–9",tdir:"▲ +0.8"},
+  steps:{name:"Steps",tn:"Steps",u:"",v:"8,450",status:"WATCH",cls:"amber",src:"WATCH",dev:true,data:[6100,6400,6900,7200,7600,7900,8200,8450],decimals:0,band:{from:10000,to:14000},targetLine:10000,targetLabel:"10k",yMin:5500,yMax:11000,delta:"▲ 2.3k",start:"6,100",tgt:"10k",tgttile:"Target 10k",tdir:"▲ +2.3k"},
+  vo2:{name:"VO₂max",tn:"VO₂max",u:"",v:"44",status:"OPTIMAL",cls:"green",src:"WATCH",dev:true,data:[40,40,41,41,42,43,43,44],decimals:0,band:{from:42,to:60},targetLine:42,yMin:38,yMax:48,delta:"▲ 4",start:"40",tgt:"46",tgttile:"Optimal > 42",tdir:"▲ +4"},
+  bp:{name:"Blood Pressure",tn:"Blood Pressure",u:"",v:"122/78",status:"ELEVATED",cls:"amber",src:"MANUAL",data:[128,127,126,125,124,123,123,122],decimals:0,band:{from:100,to:120},targetLine:120,yMin:118,yMax:130,delta:"▼ 6",start:"128",tgt:"120",tgttile:"Aim < 120 systolic",tdir:"▼ −6",tileVal:"122/78"}
+};
+const BODYORDER=["grip","rhr","hrv","bp","weight","sleep","steps","vo2"];
+let bodyCur="rhr";
+const QUESTS=[
+  {ic:"ring",cat:"Set up",title:"Connect your Oura ring",time:"1 min",gain:"+10",feature:true,reward:"Turns on your daily <b>Momentum score</b> and auto-fills sleep, HRV & resting HR — no more manual logging.",cta:"Connect"},
+  {ic:"fish",cat:"Dial in your plan",title:"Name your omega-3 brand & dose",time:"30 sec",gain:"+5",reward:"Lets us attribute your next <b>lipid change</b> precisely to what you're actually taking.",cta:"Add details"},
+  {ic:"sleep",cat:"Know yourself",title:"Sleep questionnaire",time:"2 min",gain:"+8",reward:"Sharpens your <b>Hormones & Recovery</b> scores — currently estimated from bloods alone.",cta:"Start"},
+  {ic:"brain",cat:"Know yourself",title:"Stress & mood check",time:"3 min",gain:"+8",progress:40,progtxt:"2 / 5",inprogress:true,reward:"Adds the missing piece behind your <b>cortisol</b> pattern."},
+  {ic:"calendar",cat:"Consistency",title:"Keep 7 days of daily data",time:"ongoing",gain:"+6",progress:71,progtxt:"5 / 7 days",inprogress:true,reward:"Consistent daily data makes every trend line <b>trustworthy</b>."},
+  {ic:"dna",cat:"Know yourself",title:"Family history",time:"3 min",gain:"+7",reward:"Flags inherited risks so your team screens for the <b>right things</b> early.",cta:"Start"},
+  {ic:"meal",cat:"Dial in your plan",title:"Pick your 3 go-to meals",time:"1 min",gain:"+4",reward:"Your nutritionist tailors swaps around food you'll <b>actually eat</b>.",cta:"Choose"},
+  {ic:"lab",cat:"Set up",title:"Upload a past lab report",time:"done",gain:"+6",done:true,reward:"Added a second data point so your trends go back <b>further</b>."}
+];
+
+/* ---------------- renderers ---------------- */
+const SYSMAP=[
+ {n:"Hormones",p:68,s:"WATCH",c:"#f5b544",dot:[440,142],side:"L",ly:154},
+ {n:"Liver",p:88,s:"OPTIMAL",c:"#43d99a",dot:[432,250],side:"L",ly:262},
+ {n:"Metabolism",p:89,s:"OPTIMAL",c:"#43d99a",dot:[436,298],side:"L",ly:366},
+ {n:"Kidneys",p:95,s:"OPTIMAL",c:"#43d99a",dot:[428,332],side:"L",ly:470},
+ {n:"Heart Health",p:65,s:"WATCH",c:"#f5b544",dot:[466,206],side:"R",ly:154},
+ {n:"Blood & Immune",p:84,s:"OPTIMAL",c:"#43d99a",dot:[462,244],side:"R",ly:262},
+ {n:"Vitamins & Minerals",p:73,s:"WATCH",c:"#f5b544",dot:[470,300],side:"R",ly:366},
+ {n:"Inflammation",p:91,s:"OPTIMAL",c:"#43d99a",dot:[460,340],side:"R",ly:470}
+];
+function drawBodyMap(){
+  const body=`
+   <ellipse cx="450" cy="602" rx="120" ry="15" fill="#3a7fd0" opacity=".16"/>
+   <g stroke="rgba(255,255,255,0.1)" stroke-width="2" fill="none"><path d="M44,74 44,44 74,44"/><path d="M856,74 856,44 826,44"/><path d="M44,588 44,618 74,618"/><path d="M856,588 856,618 826,618"/></g>
+   <g opacity=".34" fill="#2f6fb0" stroke="#6fb6ff" stroke-width="1">
+     <circle cx="450" cy="84" r="36"/>
+     <rect x="435" y="112" width="30" height="24" rx="8"/>
+     <path d="M400,146 C396,138 504,138 500,146 C520,156 530,178 532,206 C534,256 518,320 500,350 L400,350 C382,320 366,256 368,206 C370,178 380,156 400,146 Z"/>
+     <g id="limb"><path d="M404,154 C386,160 376,182 374,212 C370,250 363,300 359,332 C358,345 377,347 380,334 C387,300 396,248 402,214 C404,191 410,170 417,156 Z"/><path d="M400,350 C396,440 400,520 416,596 C418,606 432,606 432,596 C444,520 448,440 446,350 Z"/></g>
+     <use href="#limb" transform="translate(900,0) scale(-1,1)"/>
+   </g>
+   <path d="M450,120 L450,350 M400,210 L500,210" stroke="rgba(120,190,255,0.18)" stroke-width="1" fill="none"/>`;
+  let lab='';
+  SYSMAP.forEach(m=>{const L=m.side==='L',tx=L?58:842,anc=L?'start':'end',ox=L?236:664,oy=m.ly+2,ldx=L?44:856;
+    lab+=`<polyline points="${ox},${oy} ${m.dot[0]},${m.dot[1]}" fill="none" stroke="${m.c}" stroke-width="1.2" stroke-dasharray="2 4" opacity=".5"/>`;
+    lab+=`<circle cx="${m.dot[0]}" cy="${m.dot[1]}" r="11" fill="${m.c}" opacity=".16"><animate attributeName="opacity" values=".04;.2;.04" dur="3.2s" repeatCount="indefinite"/></circle><circle cx="${m.dot[0]}" cy="${m.dot[1]}" r="4.5" fill="${m.c}"/>`;
+    lab+=`<circle cx="${ldx}" cy="${m.ly-5}" r="4" fill="${m.c}"/>`;
+    lab+=`<text x="${tx}" y="${m.ly}" text-anchor="${anc}" fill="#dfe5ee" font-size="15" font-weight="600">${m.n}</text>`;
+    lab+=`<text x="${tx}" y="${m.ly+25}" text-anchor="${anc}"><tspan font-size="23" font-weight="700" fill="${m.c}">${m.p}</tspan><tspan font-size="12" fill="#7a8296">%</tspan><tspan dx="8" font-size="10" font-weight="700" fill="${m.c}" letter-spacing="1">${m.s}</tspan></text>`;
+  });
+  return `<svg viewBox="0 0 900 630" width="100%">${body}${lab}</svg>`;
+}
+function drawDash(){
+  ringSVG(document.getElementById('dashBio'),79,'49','Bio Age','#7ea2ff',130,6);
+  ringSVG(document.getElementById('dashMom'),82,'82','Momentum','#43d99a',130,10);
+  document.getElementById('bodymapwrap').innerHTML=drawBodyMap();
+}
+function renderBlood(){
+  document.getElementById('bloodBody').innerHTML=BLOOD.map((b,i)=>{
+    const stable=/stable/.test(b.dl);
+    const dc=stable?'':(b.good?'green':'red');
+    return `<tr class="click" tabindex="0" onclick="bloodDetail(${i})" onkeydown="if(event.key==='Enter'){bloodDetail(${i})}"><td><div class="mk"><span class="dot bg-${b.c}"></span><span class="nm">${b.n}</span></div></td><td class="hidecol cat">${b.sys}</td><td><span class="val">${b.v}<span class="u">${b.u}</span></span></td><td class="hidecol tgt">${b.opt}</td><td><span class="status st-${b.c}">${b.st}</span></td><td class="tr"><div class="miniwrap">${spark(b.d,stable?'stable':b.good)}<span class="delta ${dc}" style="${stable?'color:var(--muted-2)':''}">${b.dl}</span></div></td></tr>`;
+  }).join('');
+}
+function pmRender(){
+  document.getElementById('pmBody').innerHTML=PMORDER.map(k=>{const m=PM[k];const badge=m.badge?`<span class="badge ${(m.badge==='FIELD TEST'||m.badge==='KEY')?'blue':''}">${m.badge}</span>`:'';
+    return `<tr class="click ${k===pmCur?'sel':''}" onclick="pmSelect('${k}')"><td><div class="mk"><span class="dot bg-${m.cls}"></span><span class="nm">${m.name}${badge}<small>${m.extra}</small></span></div></td><td class="hidecol cat">${m.cat}</td><td><span class="val">${m.v}<span class="u">${m.u}</span></span></td><td class="hidecol tgt">${m.target}</td><td><span class="status st-${m.cls}">${m.status}</span></td><td class="tr"><div class="miniwrap">${spark(m.data)}<span class="delta ${m.cls==='amber'?'green':m.cls}">${m.delta}</span></div></td></tr>`;
+  }).join('');
+  pmChart(pmCur);
+}
+function pmChart(k){const m=PM[k];drawChart('pmChart',m,270);
+  document.getElementById('pmTitle').innerHTML=m.name;document.getElementById('pmBig').textContent=m.v;document.getElementById('pmUnit').textContent=m.u;
+  const st=document.getElementById('pmStatus');st.textContent=m.status;st.className='status st-'+m.cls;
+  const dl=document.getElementById('pmDelta');dl.textContent=m.delta;dl.className='d '+(m.cls==='amber'?'green':m.cls);
+  document.getElementById('pmTgLabel').innerHTML=m.tgLabel;document.getElementById('pmTgPct').textContent=m.tgpct;document.getElementById('pmStart').textContent=m.start;document.getElementById('pmTgt').textContent=m.tgt;
+  const f=document.getElementById('pmFill'),nw=document.getElementById('pmNow');f.style.width='0';nw.style.left='0';setTimeout(()=>{f.style.width=m.pct+'%';nw.style.left=m.pct+'%';},60);
+}
+function pmSelect(k){pmCur=k;pmRender();document.getElementById('v_physical').querySelector('.chartcard').scrollIntoView({behavior:'smooth',block:'center'});}
+
+function bodyRender(){
+  ringSVG(document.getElementById('bodyBio'),79,'49','Bio Age','#7ea2ff',120,6);
+  ringSVG(document.getElementById('bodyMom'),82,'82','Momentum','#43d99a',120,10);
+  document.getElementById('bodyTiles').innerHTML=BODYORDER.map(k=>{const m=BODY[k];const tv=m.tileVal||m.v;
+    return `<div class="tile ${k===bodyCur?'sel':''}" onclick="bodySelect('${k}')"><div class="top"><span class="tn"><span class="dot bg-${m.cls}" style="width:7px;height:7px;border-radius:50%;display:inline-block"></span>${m.tn}</span><span class="src ${m.dev?'dev':''}">${m.src}</span></div><div class="valrow"><span class="tv">${tv}</span><span class="tu">${m.u}</span><span class="st ${m.cls}">${m.status}</span></div>${spark(m.data)}<div class="foot"><span class="tt">${m.tgttile}</span><span class="td green">${m.tdir}</span></div></div>`;
+  }).join('');
+  bodyChart(bodyCur);
+}
+function bodyChart(k){const m=BODY[k];m.v=m.tileVal||m.v;drawChart('bChart',m,250);
+  document.getElementById('bTitle').innerHTML=m.name;document.getElementById('bBig').textContent=(m.tileVal||m.v);document.getElementById('bUnit').textContent=m.u;
+  const st=document.getElementById('bStatus');st.textContent=m.status;st.className='status st-'+m.cls;
+  const dl=document.getElementById('bDelta');dl.textContent=m.delta;dl.className='d '+(m.cls==='amber'?'green':m.cls);
+}
+function bodySelect(k){bodyCur=k;bodyRender();}
+
+function questRender(){
+  ringSVG(document.getElementById('strengthRing'),64,'64%','Profile complete','url(#pg)',150,11);
+  // inject gradient def into the ring svg
+  const svg=document.querySelector('#strengthRing svg');
+  if(svg && !svg.querySelector('#pg')){const d=document.createElementNS('http://www.w3.org/2000/svg','defs');d.innerHTML='<linearGradient id="pg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#43d99a"/><stop offset="1" stop-color="#b79cff"/></linearGradient>';svg.prepend(d);}
+  document.getElementById('quests').innerHTML=QUESTS.map(q=>{let cta;
+    if(q.done)cta=`<div class="donechip">✓ Completed · ${q.gain} confidence</div>`;
+    else if(q.inprogress)cta=`<div class="prog"><i style="width:${q.progress}%"></i></div><div class="progtxt">${q.progtxt}</div>`;
+    else cta=`<span class="progtxt" style="color:var(--muted-2)">sharpens your profile</span><button class="qbtn">${q.cta}</button>`;
+    return `<div class="q ${q.done?'done':''} ${q.feature?'feature':''}">${q.feature?'<span class="featTag">START HERE</span>':''}<div class="qtop"><div class="ic">${ic(q.ic)}</div><div><div class="qcat">${q.cat}</div><div class="qtitle">${q.title}</div><div class="qmeta"><span>${q.time}</span><span class="gain">+${q.gain.replace('+','')} confidence</span></div></div></div><div class="reward"><span class="rx">${ic('spark',14)}</span><span>${q.reward}</span></div><div class="cta">${cta}</div></div>`;
+  }).join('');
+}
+
+/* ---------------- router ---------------- */
+/* ---- blood detail (insight -> action) ---- */
+function bloodDetail(i){const b=BLOOD[i];const stable=/stable/.test(b.dl);
+  const lip=['Apolipoprotein B','LDL Cholesterol','Total Cholesterol'].includes(b.n);
+  const act=lip
+    ?`<div class="reward" style="margin-top:14px"><span class="rx">${ic('spark',14)}</span><span>Your plan already targets this — <b>psyllium fiber, plant sterols &amp; omega-3</b>. <a onclick="closeBlood();showView('plan')" style="color:var(--blue);cursor:pointer;font-weight:600">Open My Plan →</a></span></div>`
+    :(b.c==='green'
+      ?`<div style="margin-top:14px;font-size:13px;color:var(--muted)">In range — nothing to do here. Keep it up.</div>`
+      :`<div class="reward" style="margin-top:14px"><span class="rx">${ic('spark',14)}</span><span>Worth a word with your team about this one. <a onclick="closeBlood();showView('team')" style="color:var(--blue);cursor:pointer;font-weight:600">Message your team →</a></span></div>`);
+  document.getElementById('bloodModal').innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div><h2>${b.n}</h2><div class="msub">${b.sys} · optimal ${b.opt}</div></div><button class="cancel" style="padding:8px 12px" onclick="closeBlood()" aria-label="Close">✕</button></div>
+    <div style="display:flex;align-items:baseline;gap:10px;margin:4px 0"><span style="font-size:34px;font-weight:700">${b.v}</span><span style="color:var(--muted)">${b.u}</span><span class="status st-${b.c}" style="margin-left:auto">${b.st}</span></div>
+    <div style="margin:12px 0 6px">${spark(b.d,stable?'stable':b.good)}</div>
+    <div style="font-size:13px;color:var(--muted)">Trend across your 2 reports: <span class="${stable?'':(b.good?'green':'red')}" style="font-weight:600;${stable?'color:var(--muted-2)':''}">${b.dl}</span></div>
+    ${act}
+    <div class="modact"><button class="save" onclick="closeBlood()">Close</button></div>`;
+  document.getElementById('bloodOverlay').classList.add('show');document.body.style.overflow='hidden';}
+function closeBlood(){document.getElementById('bloodOverlay').classList.remove('show');document.body.style.overflow='';}
+
+/* ---- my plan ---- */
+const PLAN=[
+ {ic:'meal',name:'Mediterranean meals',dose:'most meals',targets:['LDL','ApoB'],adh:86,done:true,state:'On track',cls:'green'},
+ {ic:'pill',name:'Psyllium fiber',dose:'10 g with water',targets:['LDL'],adh:90,done:true,state:'On track',cls:'green'},
+ {ic:'pill',name:'Plant sterols',dose:'2 g with a meal',targets:['LDL','ApoB'],adh:78,done:false,state:'On track',cls:'green'},
+ {ic:'fish',name:'Omega-3',dose:'1–4 g EPA+DHA',targets:['Triglycerides'],adh:70,done:false,state:'Slipping',cls:'amber'},
+ {ic:'walk',name:'Daily walk',dose:'20+ min',targets:['Resting HR'],adh:64,done:false,state:'Slipping',cls:'amber'}
+];
+function planRender(){
+  const doneN=PLAN.filter(p=>p.done).length;
+  document.getElementById('planToday').innerHTML=`Today <b>${doneN}/${PLAN.length}</b> done`;
+  const focus=[...PLAN].sort((a,b)=>a.adh-b.adh)[0];
+  document.getElementById('planFocus').innerHTML=`<div class="fic">${ic('spark',18)}</div><div class="ft"><b>This week, focus on ${focus.name}.</b> It's your weakest link at ${focus.adh}% — and it's a lever for ${focus.targets.join(' & ')}. Small and steady beats perfect.</div>`;
+  document.getElementById('planList').innerHTML=PLAN.map((p,i)=>`
+    <div class="pcard ${p.done?'done':''}">
+      <div class="pchk" role="checkbox" tabindex="0" aria-checked="${p.done}" onclick="planToggle(${i})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();planToggle(${i})}">✓</div>
+      <div class="picon">${ic(p.ic,18)}</div>
+      <div class="pmid"><div class="pn">${p.name}<small>${p.dose}</small></div>
+        <div class="ptargets">${p.targets.map(t=>`<span class="tchip" onclick="showView('blood')">moves ${t}</span>`).join('')}</div></div>
+      <div class="pright"><div class="pstate ${p.cls}">${p.state} · ${p.adh}%</div><div class="padh"><i class="bg-${p.cls}" style="width:${p.adh}%"></i></div></div>
+    </div>`).join('');
+}
+function planToggle(i){PLAN[i].done=!PLAN[i].done;planRender();}
+
+/* ---- progress ---- */
+function progressRender(){
+  const W=560,H=150,pl=36,pr=80,pt=18,pb=28,mn=47,mx=52,rng=mx-mn,proj=47.9;
+  const X=i=>pl+(i/2)*(W-pl-pr),Y=v=>pt+(1-(v-mn)/rng)*(H-pt-pb);
+  const p0=[X(0),Y(51.2)],p1=[X(1),Y(49.0)],p2=[X(2),Y(proj)];
+  document.getElementById('progHero').innerHTML=`
+    <div class="prog-top"><div><div class="lab">Biomarker Age</div><div class="big">49 <span style="font-size:16px;color:var(--muted)">yrs</span></div><div class="d">▼ 2.2 yrs since your first draw</div></div>
+    <svg width="100%" viewBox="0 0 ${W} ${H}" style="max-width:${W}px;flex:1;min-width:280px" role="img" aria-label="Biomarker age over time">
+      <path d="M${p0[0]} ${p0[1]} L${p1[0]} ${p1[1]}" stroke="#43d99a" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <path d="M${p1[0]} ${p1[1]} L${p2[0]} ${p2[1]}" stroke="#43d99a" stroke-width="2" stroke-dasharray="5 5" fill="none" opacity=".55"/>
+      <circle cx="${p0[0]}" cy="${p0[1]}" r="4" fill="#8b94a6"/><text x="${p0[0]}" y="${p0[1]-10}" fill="#8b94a6" font-size="11" text-anchor="middle">51.2</text><text x="${p0[0]}" y="${H-8}" fill="#7a8296" font-size="10.5" text-anchor="middle">Nov 23</text>
+      <circle cx="${p1[0]}" cy="${p1[1]}" r="5" fill="#43d99a"/><text x="${p1[0]}" y="${p1[1]-12}" fill="#eafff2" font-size="12" font-weight="700" text-anchor="middle">49.0</text><text x="${p1[0]}" y="${H-8}" fill="#7a8296" font-size="10.5" text-anchor="middle">6 May</text>
+      <circle cx="${p2[0]}" cy="${p2[1]}" r="4" fill="none" stroke="#43d99a" stroke-width="2"/><text x="${p2[0]}" y="${p2[1]-10}" fill="#7fe6b8" font-size="11" text-anchor="middle">~47.9</text><text x="${p2[0]}" y="${H-8}" fill="#7a8296" font-size="10.5" text-anchor="middle">next draw</text>
+    </svg></div>`;
+  const improved=[['Triglycerides','▼ 14','102→88'],['HbA1c','▼ 0.2','5.6→5.4'],['hs-CRP','▼ 0.3','0.9→0.6'],['Waist-to-height','▼ 0.03','0.52→0.49'],['Testosterone','▲ 19','300→319']];
+  const declined=[['LDL','▲ 17','176→193'],['ApoB','▲ 10','104→114'],['Total cholesterol','▲ 16','236→252']];
+  const row=(a,c)=>`<div class="chgrow"><span>${a[0]}</span><span class="cv ${c}">${a[1]} <span style="color:var(--muted-2);font-weight:400">${a[2]}</span></span></div>`;
+  document.getElementById('progChanged').innerHTML=`
+    <div class="chgcol"><h4 class="green">${ic('spark',15)} Improved (${improved.length})</h4>${improved.map(a=>row(a,'green')).join('')}</div>
+    <div class="chgcol"><h4 class="red">Needs work (${declined.length})</h4>${declined.map(a=>row(a,'red')).join('')}<div style="font-size:12px;color:var(--muted);margin-top:12px;line-height:1.5">All three are your lipid pattern — the focus of your plan. You've been ~86% consistent with fiber; the next draw should show the response.</div></div>`;
+  const goals=[['Lower LDL','193 → target < 100',18],['Waist-to-height','0.52 → < 0.50',100],['Grip strength','48 → 50 kg',78],['Weight','80.5 → 75 kg',38]];
+  document.getElementById('progGoals').innerHTML=goals.map(g=>`<div class="goal"><div class="gn">${g[0]}<small>${g[1]}</small></div><div class="gbar"><i style="width:${g[2]}%"></i></div><div class="gpct">${g[2]===100?'met ✓':g[2]+'%'}</div></div>`).join('');
+  const tl=[['6 May','2nd blood draw','Bio Age 49.0 — down 1.1 from your first draw','done'],['16 Jul','Plan committed','5 actions agreed with Dr. Zeth','done'],['1 Aug','Waist-to-height back in range','Crossed below 0.50','done'],['Now','Next blood draw due','Fresh numbers to confirm the lipid work','future']];
+  document.getElementById('progTimeline').innerHTML=tl.map(t=>`<div class="tli ${t[3]==='future'?'future':''}"><div class="td">${t[0]}</div><div class="tt">${t[1]}</div><div class="tx">${t[2]}</div></div>`).join('');
+}
+
+/* ---- care team ---- */
+function teamRender(){
+  const team=[['Z','Zeth','Doctor','#7ea2ff','Reviewed your labs · 6 May'],['D','Dan','Coach','#43d99a','Read your check-in · today'],['A','Anton','Nutritionist','#f5b544','Updated your plan · 2 days ago']];
+  document.getElementById('teamCards').innerHTML=team.map(t=>`<div class="tcard"><div class="av" style="background:${t[3]}">${t[0]}</div><div class="tn">${t[1]}</div><div class="tr">${t[2]}</div><div class="ts">${t[4]}</div></div>`).join('');
+  const msgs=[
+    ['them','D','Dan (coach)','#43d99a',"Nice work keeping fiber at 90% this week — that's exactly the lever for your LDL. Saw the knee note; let's swap one walk for a swim."],
+    ['me','','You','#7ea2ff',"Thanks — knee's better. I don't love fish though; is the omega-3 supplement enough?"],
+    ['them','A','Anton (nutritionist)','#f5b544',"Totally fine. Keep EPA+DHA at 2 g/day and we'll lean on plant sterols + fiber. I've noted it in your plan."],
+    ['them','Z','Zeth (doctor)','#7ea2ff',"Lipids are the one thing to push this cycle. Let's get the draw booked so we can confirm the plan's working."]
+  ];
+  document.getElementById('teamThread').innerHTML=msgs.map(m=>`<div class="msg ${m[0]}">${m[0]==='them'?`<div class="mav" style="background:${m[3]}">${m[1]}</div>`:''}<div><div class="who">${m[2]}</div><div class="mb">${m[4]}</div></div></div>`).join('');
+}
+
+function showView(v){
+  document.querySelectorAll('.view').forEach(s=>s.style.display='none');
+  document.getElementById('v_'+v).style.display='block';
+  document.querySelectorAll('.nav a,.foot a').forEach(a=>a.classList.toggle('active',a.dataset.v===v));
+  if(v==='dashboard')drawDash();
+  if(v==='blood')renderBlood();
+  if(v==='physical')pmRender();
+  if(v==='body')bodyRender();
+  if(v==='levelup')questRender();
+  if(v==='plan')planRender();
+  if(v==='progress')progressRender();
+  if(v==='team')teamRender();
+  document.querySelector('.sidebar').classList.remove('open');
+  document.getElementById('scrim').classList.remove('show');
+  window.scrollTo(0,0);
+}
+function toggleNav(){
+  const open=document.querySelector('.sidebar').classList.toggle('open');
+  document.getElementById('scrim').classList.toggle('show',open);
+}
+
+/* ---------------- log modal ---------------- */
+function openLog(){document.getElementById('logOverlay').classList.add('show');document.body.style.overflow='hidden';}
+function closeLog(){document.getElementById('logOverlay').classList.remove('show');document.body.style.overflow='';}
+function saveLog(){closeLog();toast('✓ Measurements saved · trends updated');}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600);}
+document.getElementById('logOverlay').addEventListener('click',e=>{if(e.target.id==='logOverlay')closeLog();});
+
+/* ---------------- check-in ---------------- */
+let ciStep=0,ciFeel=8,ciMeal=null,ciMoodIdx=null;const ciMoods=['😄','🙂','😐','😕'];const ciSeq=['open','synced','adherence','feel','note','payoff'];const ciBackBtn='<button class="ciback" onclick="ciBack()" aria-label="Back">‹</button>';
+const ciAdh={psy:false,ster:false,om:false,walk:false};
+function ciOpen(){ciStep=0;ciMeal=null;ciMoodIdx=null;for(const k in ciAdh)ciAdh[k]=false;document.getElementById('ciOverlay').classList.add('show');document.body.style.overflow='hidden';ciRender();}
+function ciClose(){document.getElementById('ciOverlay').classList.remove('show');document.body.style.overflow='';}
+function ciDots(){let s='<div class="cidots">';for(let i=0;i<ciSeq.length-2;i++)s+=`<i class="${i<=ciStep-1?'on':''}"></i>`;return s+'</div>';}
+function ciAdhItem(id,icn,t,s){return `<div class="item ${ciAdh[id]?'done':''}" onclick="ciToggle('${id}')"><span class="ic">${ic(icn,18)}</span><span class="tx">${t}<small>${s}</small></span><span class="chk">✓</span></div>`;}
+function ciWord(v){v=+v;return v>=9?'Fantastic':v>=7?'Good — steady energy':v>=5?'A bit flat':v>=3?'Low':'Running on empty';}
+function ciRender(){
+  const key=ciSeq[ciStep];let b='';
+  if(key==='open')b=`<div class="cibody"><div class="cispace"></div><div class="kicker" style="text-align:center">Good morning, Dan</div><div class="ch" style="text-align:center">30 seconds keeps your scores honest.</div><div class="csub" style="text-align:center">Yesterday's plan and this morning's energy — your team sees it today.</div><div style="text-align:center;margin-top:16px"><span class="daychip">${ic('calendar',15)} 12 days running</span></div><div class="cispace"></div><button class="cibtn" onclick="ciNext()">Start check-in</button></div>`;
+  else if(key==='synced')b=`<div class="cibody">${ciDots()}<div class="kicker" style="margin-top:12px">While you slept</div><div class="ch">Already in — nothing to log.</div><div class="synced"><div class="row"><span class="ic">${ic('sleep',18)}</span><span class="nm">Sleep</span><span class="vv">7h 12m</span><span class="ck">✓</span></div><div class="row"><span class="ic">${ic('heart',18)}</span><span class="nm">Resting HR</span><span class="vv">58 bpm</span><span class="ck">✓</span></div><div class="row"><span class="ic">${ic('pulse',18)}</span><span class="nm">HRV</span><span class="vv">62 ms</span><span class="ck">✓</span></div><div class="row"><span class="ic">${ic('steps',18)}</span><span class="nm">Steps (yesterday)</span><span class="vv">8,450</span><span class="ck">✓</span></div></div><div class="autotag">⟳ Synced from Oura + Apple Watch</div><div class="cispace"></div><button class="cibtn" onclick="ciNext()">Next</button></div>`;
+  else if(key==='adherence')b=`<div class="cibody">${ciDots()}<div class="kicker" style="margin-top:10px">Yesterday</div><div class="ch">How did the plan go?</div><div class="adh"><div class="item" style="cursor:default"><span class="ic">${ic('meal',18)}</span><span class="tx">Mediterranean meals<small>your committed base</small></span><div class="seg"><button class="${ciMeal==='All'?'on':''}" onclick="ciSeg(event)">All</button><button class="${ciMeal==='Some'?'on':''}" onclick="ciSeg(event)">Some</button><button class="${ciMeal==='No'?'on':''}" onclick="ciSeg(event)">No</button></div></div>${ciAdhItem('psy','pill','Psyllium fiber','10 g with water')}${ciAdhItem('ster','pill','Plant sterols','2 g with a meal')}${ciAdhItem('om','fish','Omega-3','1000–4000 mg')}${ciAdhItem('walk','walk','Daily walk','20+ min')}</div><button class="markall" onclick="ciAll()">✓ I did everything</button><div class="cispace"></div><button class="cibtn" onclick="ciNext()">Next</button></div>`;
+  else if(key==='feel')b=`<div class="cibody">${ciDots()}<div class="kicker" style="margin-top:10px">This morning</div><div class="ch">How do you feel?</div><div class="feelval" id="ciFeelNum">${ciFeel}</div><div class="feelword" id="ciFeelWord">${ciWord(ciFeel)}</div><input type="range" min="1" max="10" value="${ciFeel}" oninput="ciSetFeel(this.value)"><div class="ends"><span>Drained</span><span>Energised</span></div><div class="moods" id="ciMoods">${ciMoods.map((m,i)=>`<button class="${ciMoodIdx===i?'on':''}" aria-label="mood ${4-i}" onclick="ciMood(${i})">${m}</button>`).join('')}</div><div class="cispace"></div><button class="cibtn" onclick="ciNext()">Next</button></div>`;
+  else if(key==='note')b=`<div class="cibody">${ciDots()}<div class="kicker" style="margin-top:10px">Optional</div><div class="ch">Anything for your team?</div><div class="cnote"><textarea placeholder="Sore knee after the walk, sleeping better since cutting coffee earlier…"></textarea></div><div class="cteam"><div class="avs"><span style="background:#7ea2ff">Z</span><span style="background:#43d99a">D</span><span style="background:#f5b544">A</span></div>Zeth, Dan & Anton read every note.</div><div class="cispace"></div><button class="cibtn" onclick="ciNext()">Finish</button><button class="cibtn ghost" onclick="ciNext()">Skip</button></div>`;
+  else if(key==='payoff')b=`<div class="cibody"><div class="cispace"></div><div class="doneRing">✓</div><div class="payh">Done for today, Dan.</div><div class="pays">Your team has your update. See you tomorrow.</div><div class="statgrid"><div class="statc"><div class="n" id="ciMom">82</div><div class="l">Momentum</div></div><div class="statc"><div class="n">13</div><div class="l">days running</div></div></div><div class="insight"><span class="ic">✦</span><span class="tx"><b>6 days of fiber in a row</b> — exactly the lever for your LDL. Your next draw should show it.</span></div><div class="coachnote"><div class="av">D</div><div class="tx"><b>Dan (coach):</b> Nice consistency! Saw the knee note — let's swap one walk for a swim.</div></div><div class="cispace"></div><button class="cibtn" onclick="ciClose()">Back to dashboard</button></div>`;
+  document.getElementById('ciScreen').innerHTML=`<div class="cicard">${(key!=='open'&&key!=='payoff')?ciBackBtn:''}${b}</div>`;
+  if(key==='payoff')setTimeout(()=>{const e=document.getElementById('ciMom');if(e)e.innerHTML='83 <span class="up">▲</span>';},450);
+}
+function ciNext(){if(ciStep<ciSeq.length-1){ciStep++;ciRender();}}
+function ciBack(){if(ciStep>0){ciStep--;ciRender();}}
+function ciToggle(id){ciAdh[id]=!ciAdh[id];ciRender();}
+function ciAll(){for(const k in ciAdh)ciAdh[k]=true;ciMeal='All';ciRender();}
+function ciSeg(e){ciMeal=e.target.textContent.trim();ciRender();}
+function ciSetFeel(v){ciFeel=+v;document.getElementById('ciFeelNum').textContent=v;document.getElementById('ciFeelWord').textContent=ciWord(v);}
+function ciMood(i){ciMoodIdx=i;ciRender();}
+document.getElementById('ciOverlay').addEventListener('click',e=>{if(e.target.id==='ciOverlay')ciClose();});
+
+/* a11y + init */
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeLog();ciClose();closeBlood();document.querySelector('.sidebar').classList.remove('open');document.getElementById('scrim').classList.remove('show');}});
+document.getElementById('bloodOverlay').addEventListener('click',e=>{if(e.target.id==='bloodOverlay')closeBlood();});
+document.querySelectorAll('.nav a,.foot a').forEach(a=>{a.setAttribute('tabindex','0');a.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();a.click();}});});
+showView('dashboard');
+</script>
+</body>
+</html>
